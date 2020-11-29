@@ -9,7 +9,7 @@ import numpy as np
 import run_grid
 import time
 
-phases = [0.0]
+phases = [180.0]
 inclinations = [0.0]
 sytem_obliquity = 0
 
@@ -29,8 +29,14 @@ dopplers = [0]
 
 #planet_name = "UPS-LOW-G-COM-CLOUDY"
 planet_name = "UPS-LOW-G-EXT-CLOUDY"
-#planet_name = "UPS-LOW-G-EXT-CLEAR"
-#planet_name = "UPS-HIGH-G-EXT-CLEAR"
+#planet_name = "UPS-BIG-G-COM-CLOUDY"
+
+# This one doesn't exist yet
+#planet_name = "UPS-BIG-G-COM-CLOUDY"
+
+
+#planet_name = "UPS-LOW-G-CLEAR"
+#planet_name = "UPS-BIG-G-CLEAR"
 
 
 def add_columns(phases, inclinations):

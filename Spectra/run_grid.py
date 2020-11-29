@@ -17,8 +17,9 @@ def run_all_grid(planet_name, phases,inclinations, system_obliquity, NTAU, NLAT,
     for phase in phases:
         for inc in inclinations:
 
+            # Sometime w is read in as an object, but it's set to 0 anyway
             df = pd.read_csv(planet_file,
-                             delim_whitespace=True,
+                             delimiter=r"\s+",
                              names=('lat', 'lon', 'level',
                                     'alt','pres','temp',
                                     'temp_std',
@@ -26,30 +27,37 @@ def run_all_grid(planet_name, phases,inclinations, system_obliquity, NTAU, NLAT,
                                     'aero_sw_tau_1', 'sw_asym_1', 'sw_pi0_1',
                                     'aero_sw_tau_2', 'sw_asym_2', 'sw_pi0_2',
                                     'aero_sw_tau_3', 'sw_asym_3', 'sw_pi0_3',
-                                    'aero_sw_tau_4', 'sw_asym_4', 'sw_pi0_4'), index_col='lat')
+                                    'aero_sw_tau_4', 'sw_asym_4', 'sw_pi0_4'),
+                                    dtype={'lat':float,
+                                    'lon':float,
+                                    'level':float,
+                                    'alt':float,
+                                    'pres':float,
+                                    'temp':float,
+                                    'temp_std':float,
+                                    'u':float,
+                                    'v':float,
+                                    'aero_sw_tau_1':float,
+                                    'sw_asym_1':float,
+                                    'sw_pi0_1':float,
+                                    'aero_sw_tau_2':float,
+                                    'sw_asym_2':float,
+                                    'sw_pi0_2':float,
+                                    'aero_sw_tau_3':float,
+                                    'sw_asym_3':float,
+                                    'sw_pi0_3':float,
+                                    'aero_sw_tau_4':float,
+                                    'sw_asym_4':float,
+                                    'sw_pi0_4':float,
+                                    'incident_frac': float},
+                                    low_memory=False,
+                                    index_col='lat')
+
+            df['w'] = 0.0
+
             df = df.drop(['temp_std'], axis=1)
 
             df['pres'] = 1e5 * df['pres']
-
-            #elif (file_type == 'clear'):
-            #    df = pd.read_csv(planet_file,
-            #     delim_whitespace=True,
-            #     names=('lat', 'lon', 'level',
-            #            'alt','pres','temp', 'u', 'v'), index_col='lat')
-            #    df['w'] = 0
-            #    df['aero_sw_tau_1'] = 0
-            #    df['aero_sw_tau_2'] = 0
-            #    df['aero_sw_tau_3'] = 0
-            #    df['aero_sw_tau_4'] = 0
-            #    df['sw_asym_1'] = 0
-            #    df['sw_asym_2'] = 0
-            #    df['sw_asym_3'] = 0
-            #    df['sw_asym_4'] = 0
-            #    df['sw_pi0_1'] = 0
-            #    df['sw_pi0_2'] = 0
-            #    df['sw_pi0_3'] = 0
-            #    df['sw_pi0_4'] = 0
-
 
             # Get rid of any place where the longitude is equal to 360
             # Not needed by Eliza Code
@@ -132,7 +140,6 @@ def run_all_grid(planet_name, phases,inclinations, system_obliquity, NTAU, NLAT,
                 df.lon = lon_prime
                 df.u = u_prime
                 df.v = v_prime
-                df['w'] = 0.0
                 return df
 
             df = get_incident_flux(df, system_obliquity)
