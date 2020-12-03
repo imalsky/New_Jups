@@ -1,12 +1,14 @@
 '''
 
 
-update_cloudreport.py
+update_cloudreport_v2.py
 
 
 
+updated 11/30/2020 by Caleb Harada
 
-created 09/30/2018 by Caleb Harada
+
+
 
 Need to apply this code to T_P_3D file before using in RT calculation
 
@@ -17,6 +19,8 @@ Need to apply this code to T_P_3D file before using in RT calculation
 -Interpolates to uniform altitude grid
 
 -Doubles the longitude grid of Mike's cloudreport files. 
+
+-NEW: increases vertical resolution of grid ('NTAU_new')
 
 
 
@@ -41,12 +45,14 @@ NOTE:
 ### ----- INPUTS AND OUTPUTS ----- ###
 
 
-old_file = f'/home/imalsky/Desktop/cloudreport_UpsAndb_higcom_10pct (1).txt'
+case = 'compact_thick'
 
-new_file = f'/home/imalsky/Desktop/New_Jups/Planets/UPS-LOW-G-COM-CLOUDY-regrid.txt'
+old_file = f'/home/imalsky/Desktop/cloudreport_UpsAndb_higcom_10pct (1).txt'
+#new_file = f'NEW/TP_3D--cloudreport_{case}_NTAU_{NTAU_new}.dat'
+new_file = f'/home/imalsky/Desktop/New_Jups/Planets/UPS-LOW-G-COM-CLOUDY-250.txt'
+
 
 smoothing = False
-
 
 
 NLAT = 48
@@ -58,6 +64,13 @@ NTAU = 50
 NPARAMS = 22
 
 NLON_new = 96	# for output file
+
+NTAU_new = 250  # for output file
+
+
+
+
+
 
 
 #########################################
@@ -121,7 +134,7 @@ def altitudes(data):
 
 	# define new grid of altitudes
 
-	z_grid = np.flip(np.linspace(z_min, z_max, NTAU), axis=0)
+	z_grid = np.flip(np.linspace(z_min, z_max, NTAU_new), axis=0)
 
 
 	# return grid of new altitudes
@@ -139,9 +152,11 @@ def altitudes(data):
 
 def double_lons(data):
 
+
 	data2 = np.copy(data)
 
 	data3 = []
+
 
 	# add 360 to copy of longitudes (does not duplicate 360)
 
@@ -193,6 +208,7 @@ def double_lons(data):
 
 		double_data[i][4] *= 1e+5
 
+
     # return doubled data grid
 
 	return double_data
@@ -206,7 +222,7 @@ def double_lons(data):
 ### ----- LINEAR INTERPOLATION OVER ENTIRE GRID ----- ###
 
 
-def LInterp_1d(data, z_new, param_col):
+def LInterp_1d(data, data_new, z_new, param_col):
 
 	# data must be an array of dimensions [NLAT x NLON x NTAU x NPARAMS]
 	# z_grid is array of length NTAU containing new altitude grid points
@@ -244,13 +260,13 @@ def LInterp_1d(data, z_new, param_col):
 
 			# change parameter values in data array to the new interpolated values
 
-			for k in range(NTAU):
+			for k in range(NTAU_new):
 
-				data[i][j][k][param_col] = param_new[k]
+				data_new[i][j][k][param_col] = param_new[k]
 
 
 
-	return data
+	return data_new
 
 
 
@@ -262,7 +278,7 @@ def LInterp_1d(data, z_new, param_col):
 ### ----- LOGARITHMIC INTERPOLATION OVER ENTIRE GRID ----- ###
 
 
-def LogInterp_1d(data, z_new, param_col, integrate=False):
+def LogInterp_1d(data, data_new, z_new, param_col, integrate=False):
 
 	# data must be an array of dimensions [NLAT x NLON x NTAU x NPARAMS]
 	# z_grid is array of length NTAU containing new altitude grid points
@@ -288,9 +304,9 @@ def LogInterp_1d(data, z_new, param_col, integrate=False):
 
 		# define new half-step grid to interpolate over
 
-		dz = (np.max(z_new) - np.min(z_new)) / (NTAU - 1)
+		dz = (np.max(z_new) - np.min(z_new)) / (NTAU_new - 1)
 
-		half_grid = np.zeros(NTAU + 1)
+		half_grid = np.zeros(NTAU_new + 1)
 
 		half_grid[0] = z_new[0] + (0.5 * dz)
 
@@ -358,9 +374,9 @@ def LogInterp_1d(data, z_new, param_col, integrate=False):
 
 				# discretize back to grid and change parameter values in data array to the new interpolated values
 
-				for k in range(NTAU):
+				for k in range(NTAU_new):
 
-					data[i][j][k][param_col] = param_new[k+1] - param_new[k]
+					data_new[i][j][k][param_col] = param_new[k+1] - param_new[k]
 
 
 
@@ -425,14 +441,14 @@ def LogInterp_1d(data, z_new, param_col, integrate=False):
 
 				# change parameter values in data array to the new interpolated values
 
-				for k in range(NTAU):
+				for k in range(NTAU_new):
 
-					data[i][j][k][param_col] = param_new[k]
-
-
+					data_new[i][j][k][param_col] = param_new[k]
 
 
-	return data
+
+
+	return data_new
 
 	
 
@@ -458,9 +474,12 @@ def LogInterp_1d(data, z_new, param_col, integrate=False):
 
 data = np.loadtxt(old_file, skiprows=5)
 
-print(data.shape)
 
 data = data.reshape((NLAT, NLON, NTAU, NPARAMS))
+data_new = np.zeros((NLAT, NLON, NTAU_new, NPARAMS))
+
+
+print(data_new.shape)
 
 
 
@@ -490,47 +509,70 @@ if smoothing == True:
 
 # interpolate pressures onto new grid (logarithmic)
 
-data = LogInterp_1d(data, z_grid, 4)
+data_new = LogInterp_1d(data, data_new, z_grid, 4)
 
 
 # interpolate temperature onto new grid (linear)
 
-data = LInterp_1d(data, z_grid, 5)
+data_new = LInterp_1d(data, data_new, z_grid, 5)
 
 
 # interpolate winds onto new grid (linear)
 
-data = LInterp_1d(data, z_grid, 6)
-data = LInterp_1d(data, z_grid, 7)
-data = LInterp_1d(data, z_grid, 8)
+data_new = LInterp_1d(data, data_new, z_grid, 6)
+data_new = LInterp_1d(data, data_new, z_grid, 7)
+data_new = LInterp_1d(data, data_new, z_grid, 8)
 
 
 # interpolate optical depths onto new grid (logarithmic)
 
-data = LogInterp_1d(data, z_grid, 9, integrate=True)
-data = LogInterp_1d(data, z_grid, 12, integrate=True)
-data = LogInterp_1d(data, z_grid, 15, integrate=True)
-data = LogInterp_1d(data, z_grid, 18, integrate=True)
+data_new = LogInterp_1d(data, data_new, z_grid, 9, integrate=True)
+data_new = LogInterp_1d(data, data_new, z_grid, 12, integrate=True)
+data_new = LogInterp_1d(data, data_new, z_grid, 15, integrate=True)
+data_new = LogInterp_1d(data, data_new, z_grid, 18, integrate=True)
 
 
-# lastly, set all altitude grids equal (to new grid)
+# lastly, set all altitude grids equal (to new grid) and add lat, lon, level
 
 for i in range(NLAT):
 
 	for j in range(NLON):
 
-		for k in range(NTAU):
+		for k in range(NTAU_new):
 
-			data[i][j][k][3] = z_grid[k]
+			data_new[i][j][k][3] = z_grid[k]
+
+			data_new[i][j][k][2] = k + 1
+
+			data_new[i][j][k][1] = data[i][j][0][1]
+
+			data_new[i][j][k][0] = data[i][j][0][0]
 
 
 
 
 
+'''
 
-# This is skipping the double step
-np.savetxt(new_file, data.reshape(NLAT * NLON * NTAU, NPARAMS), fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E\t')
-#np.savetxt(new_file, data.reshape(NLAT * NLON * NTAU, NPARAMS), fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E\t')
+plt.plot(data[5][7][:,3], data[5][7][:,9], '.')
+
+
+data = LogInterp_1d(data, z_grid, 9, integrate=True)
+
+plt.plot(z_grid, data[5][7][:,9], 'x')
+
+
+plt.show()
+
+'''
+
+
+
+# double all data, then save to new output file
+
+np.savetxt(new_file, data_new.reshape(NLAT * NLON * NTAU_new, NPARAMS),
+           fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E\t')
+
 
 
 

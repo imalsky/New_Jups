@@ -70,7 +70,7 @@ int RT_Emit_3D(double PHASE)
     double u_vel, v_vel, w_vel, v_los, delta_lam, omega;
     
     // C HARADA -- update for 2stream //
-    int kmin, good_l, good_m;
+    int kmin, good_l, good_m, good_val;
     double incident_frac;
     double ***pi0_tot, ***asym_tot;
     
@@ -470,6 +470,7 @@ int RT_Emit_3D(double PHASE)
     printf("solid %f\n", solid);
     
     for(i=0; i<NLAMBDA; i++)
+    //for(i=398; i<399; i++)
     {
         for(l=0; l<NLAT; l++)
         {
@@ -758,8 +759,8 @@ int RT_Emit_3D(double PHASE)
         }
         
 
-
-        /*
+        
+        
         //Calculate the intensity of emergent rays at each latitude and longitude
         
         // C HARADA -- update for 2stream //
@@ -804,45 +805,59 @@ int RT_Emit_3D(double PHASE)
                         // If the intensity at a grid cell is more than 5x the average, drop it
                         // Also record the grid cell of the last 'good' intensity
 
-                        if (dtau_em[l][m][kmin+1]  / dtau_em[l][m][kmin]   > 20 ||
-                        	dtau_em[l][m][kmin+2]  / dtau_em[l][m][kmin+1] > 20 ||
-                        	dtau_em[l][m][kmin+3]  / dtau_em[l][m][kmin+2] > 20 ||
-                        	dtau_em[l][m][kmin+4]  / dtau_em[l][m][kmin+3] > 20 ||
-                        	dtau_em[l][m][kmin+5]  / dtau_em[l][m][kmin+4] > 20 ||
-                        	dtau_em[l][m][kmin+6]  / dtau_em[l][m][kmin+5] > 20 ||
-                        	dtau_em[l][m][kmin+7]  / dtau_em[l][m][kmin+6] > 20 || 
-                        	dtau_em[l][m][kmin+8]  / dtau_em[l][m][kmin+7] > 20 || 
-                        	dtau_em[l][m][kmin+9]  / dtau_em[l][m][kmin+8] > 20 ||
-                        	dtau_em[l][m][kmin+10] / dtau_em[l][m][kmin+9] > 20)
-                        {
+                        /*
+                        good_val = 0;
 
-                            //for (j = kmin; j<NTAU; j++)
-                            //{
-                            //    printf("%.8e %.8e\n", dtau_em[l][m][j], dtau_em[l][m][kmin+1] / dtau_em[l][m][kmin]);
-                            //}
-                            //printf("\n\n");
-                            intensity[l][m] = good_intensity;;
+                        for (j = kmin; j<NTAU; j++)
+                        {
+                            if (tau_em[l][m][j+1] / tau_em[l][m][j] > 20)
+                            {
+                            	good_val = 1;
+                            }
+                        }
+
+
+                        if (good_val > 0)
+                        {
+                        	intensity[l][m] = good_intensity;
+                        	num_points = num_points + 1;
                         }
 
                         else
                         {
-                            running_sum = running_sum + intensity[l][m];
-                            num_points = num_points + 1;
-                            average = running_sum / num_points;
+                            //running_sum = running_sum + intensity[l][m];
+                            //num_points = num_points + 1;
+                            //average = running_sum / num_points;
 
                             good_intensity = intensity[l][m];
                         }
+                        */
+
+                        
+	                    //if (l == 12 && m == 125)
+	                    //{
+	                    //    for (j = kmin; j<NTAU; j++)
+	                    //    {
+	                    //        printf("%.5e %.5e %.5e %.5e\n", temperature_3d[l][m][j],
+	                    //        	                  dtau_em[l][m][j],
+	                    //        	                  kappa_nu_array[l][m][j],
+	                    //        	                  pressure_array[l][m][j]);
+	                    // 	}
+	                    //    printf("\n\n");
+	                    //}
+	                    
                     }
+                //printf("%.8e \n", num_points);
                 }
             }
         }
         
-        */
+        
 
         
         
         
-       
+       /*
         
         
         // ~~~ THIS IS THE OLD RT ROUTINE ~~~ //
@@ -888,6 +903,8 @@ int RT_Emit_3D(double PHASE)
             }
         }
         
+        
+        */
 
 
         //for(l=0; l<NLAT; l++)
@@ -912,7 +929,7 @@ int RT_Emit_3D(double PHASE)
 
         
         /*Calculate the total flux received by us*/
-        //FILE *fptr = fopen("/home/imalsky/Desktop/new_isothermal.txt", "w"); 
+        //FILE *fptr = fopen("/home/imalsky/Desktop/test.txt", "w"); 
         flux_pl[i] = 0.0;
         for(l=0; l<NLAT; l++)
         {

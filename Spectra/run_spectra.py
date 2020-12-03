@@ -9,11 +9,11 @@ import numpy as np
 import run_grid
 import time
 
-phases = [180.0]
+phases = [120.0]
 inclinations = [0.0]
 sytem_obliquity = 0
 
-NTAU = 50
+NTAU = 250
 NLAT = 48
 NLON = 96
 CLOUDS = 0
@@ -23,12 +23,14 @@ file_type = 'cloudy'
 # 1 is everything
 # 2 is Wind only
 # 3 is rotation only
-dopplers = [0]
+dopplers = [1]
 
 # Compact works, extended does not
 
+planet_name = 'UPS-LOW-G-COM-CLOUDY-250'
+
 #planet_name = "UPS-LOW-G-COM-CLOUDY"
-planet_name = "UPS-LOW-G-EXT-CLOUDY"
+#planet_name = "UPS-LOW-G-EXT-CLOUDY"
 #planet_name = "UPS-BIG-G-COM-CLOUDY"
 
 # This one doesn't exist yet
@@ -147,7 +149,7 @@ output_paths = []
 inclination_strs = []
 phase_strs = []
 
-#run_grid.run_all_grid(planet_name, phases, inclinations, sytem_obliquity, NTAU, NLAT, NLON, file_type)
+run_grid.run_all_grid(planet_name, phases, inclinations, sytem_obliquity, NTAU, NLAT, NLON, file_type)
 
 input_paths, inclination_strs, phase_strs = add_columns(phases, inclinations)
 
