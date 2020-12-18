@@ -10,12 +10,12 @@ Defines input values and files for 3-D emission spectra
 /* I/O SETTINGS. */
 
 /* File names */
-#define OUTPUT_PREFIX "OUT/Spec_1_UPS-LOW-G-COM-CLOUDY-250_phase_120.0_inc_0.0"      /* output name */
-#define T_P_3D_FILE "DATA/Final_UPS-LOW-G-COM-CLOUDY-250_phase_120.0_inc_0.0.txt"         /* input file */
+#define OUTPUT_PREFIX "OUT/Spec_0_UPS-LOW-G-EXT-CLOUDY-250_phase_180.0_inc_0.0"      /* output name */
+#define T_P_3D_FILE "DATA/Final_UPS-LOW-G-EXT-CLOUDY-250_phase_180.0_inc_0.0.txt"         /* input file */
 
 /* Output settings */
 #define N_PHASE 1                          /* Number of phases [96 max; lon grid in increments of 3.75] */
-#define DOPPLER 1                /* 0:Off; 1:On */
+#define DOPPLER 0                /* 0:Off; 1:On */
 #define CLOUDS 0                           /* 0:Off; 1:On */
 
 /* Grid settings */
@@ -29,14 +29,14 @@ Defines input values and files for 3-D emission spectra
 
 /* Planet parameters */
 #define INPUT_INCLINATION 0.0  /* Planet inclination in radians            */
-#define INPUT_PHASE 120.0              /* Planet inclination in degrees           */
-#define G 4.17                             /* Planet surface gravity                 */
-#define R_PLANET 1.128e+08                 /* Planet radius at base of atmosphere      */
+#define INPUT_PHASE 180.0              /* Planet inclination in degrees           */
+#define G 12.932                             /* Planet surface gravity                 */
+#define R_PLANET 1.287e+08                 /* Planet radius at base of atmosphere      */
 
-#define ORB_SEP 9.13e+99                   // This is some distance
-#define STELLAR_TEMP 5933.0                // Stellar Blackbody temperature
-#define R_STAR 1.411e+09                    /* Stellar radius                         */
-#define P_ROT 4.885                        /* Rotation period in days (= P_ORB for tidally locked planet)    */
+#define ORB_SEP 8.901e+09                  // This is some distance
+#define STELLAR_TEMP 6213                // Stellar Blackbody temperature
+#define R_STAR 1.029e+09                    /* Stellar radius                         */
+#define P_ROT  4.6171                        /* Rotation period in days (= P_ORB for tidally locked planet)    */
 #define R_VEL 0.0                          /* Radial Velocity                        */
 #define MU 2.36                            /* Mean molecular weight                  */
 #define FORMAT 2                           /* FORMAT=1 -> small opacity table        */

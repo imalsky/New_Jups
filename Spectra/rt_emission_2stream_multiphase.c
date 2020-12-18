@@ -470,7 +470,6 @@ int RT_Emit_3D(double PHASE)
     printf("solid %f\n", solid);
     
     for(i=0; i<NLAMBDA; i++)
-    //for(i=398; i<399; i++)
     {
         for(l=0; l<NLAT; l++)
         {
@@ -760,7 +759,6 @@ int RT_Emit_3D(double PHASE)
         
 
         
-        
         //Calculate the intensity of emergent rays at each latitude and longitude
         
         // C HARADA -- update for 2stream //
@@ -790,8 +788,11 @@ int RT_Emit_3D(double PHASE)
                           kmin = j+1;
                         }
                     }
+
+                    // SHHHHH
+                    kmin = kmin + 5;
                     
-                    if (kmin == NTAU)
+                    if (kmin >= NTAU)
                     {
                         intensity[l][m] = 0;
                     }
@@ -801,65 +802,13 @@ int RT_Emit_3D(double PHASE)
                         intensity[l][m] = two_stream(NTAU, kmin, pi0_tot[l][m], asym_tot[l][m], temperature_3d[l][m], tau_em[l][m], \
                                                      CLIGHT / atmos.lambda[i], CLIGHT / atmos.lambda[i] - CLIGHT / atmos.lambda[i+1], 
                                                      incident_frac, dtau_em[l][m]);
-
-                        // If the intensity at a grid cell is more than 5x the average, drop it
-                        // Also record the grid cell of the last 'good' intensity
-
-                        /*
-                        good_val = 0;
-
-                        for (j = kmin; j<NTAU; j++)
-                        {
-                            if (tau_em[l][m][j+1] / tau_em[l][m][j] > 20)
-                            {
-                            	good_val = 1;
-                            }
-                        }
-
-
-                        if (good_val > 0)
-                        {
-                        	intensity[l][m] = good_intensity;
-                        	num_points = num_points + 1;
-                        }
-
-                        else
-                        {
-                            //running_sum = running_sum + intensity[l][m];
-                            //num_points = num_points + 1;
-                            //average = running_sum / num_points;
-
-                            good_intensity = intensity[l][m];
-                        }
-                        */
-
-                        
-	                    //if (l == 12 && m == 125)
-	                    //{
-	                    //    for (j = kmin; j<NTAU; j++)
-	                    //    {
-	                    //        printf("%.5e %.5e %.5e %.5e\n", temperature_3d[l][m][j],
-	                    //        	                  dtau_em[l][m][j],
-	                    //        	                  kappa_nu_array[l][m][j],
-	                    //        	                  pressure_array[l][m][j]);
-	                    // 	}
-	                    //    printf("\n\n");
-	                    //}
-	                    
                     }
-                //printf("%.8e \n", num_points);
                 }
             }
         }
         
-        
 
-        
-        
-        
-       /*
-        
-        
+        /*
         // ~~~ THIS IS THE OLD RT ROUTINE ~~~ //
         
         for(l=0; l<NLAT; l++)
@@ -902,31 +851,8 @@ int RT_Emit_3D(double PHASE)
                 }
             }
         }
-        
-        
         */
-
-
-        //for(l=0; l<NLAT; l++)
-        //{
-        //    for(m=0; m<NLON; m++)
-        //    {
-        //        if(atmos.lon[m]>=450.0-PHASE && atmos.lon[m]<=630.0-PHASE)
-        //        {
-        //            if(intensity[l][m] < I_top[l][m])
-        //            {
-        //                //I_top[l][m] = 0;
-        //                intensity[l][m] = -9999;
-        //                //printf("here\n");
-        //                //intensity[l][m] = -999;
-        //           }
-        //        }
-        //    }
-        //}
-        //
-        
-        
-
+ 
         
         /*Calculate the total flux received by us*/
         //FILE *fptr = fopen("/home/imalsky/Desktop/test.txt", "w"); 

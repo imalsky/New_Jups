@@ -46,8 +46,8 @@ NOTE:
 
 
 
-old_file = f'/home/imalsky/Desktop/UPS-PLANETS/UPS-BIG-G-COM-CLOUDY.txt'
-new_file = f'/home/imalsky/Desktop/UPS-PLANETS/UPS-BIG-G-COM-CLOUDY-250.txt'
+old_file = f'/home/imalsky/Desktop/UPS-PLANETS/UPS-BIG-G-CLEAR.txt'
+new_file = f'/home/imalsky/Desktop/UPS-PLANETS/UPS-BIG-G-CLEAR-250.txt'
 
 
 smoothing = False
@@ -59,7 +59,7 @@ NLON = 96
 
 NTAU = 50
 
-NPARAMS = 22
+NPARAMS = 12
 
 NLON_new = 96	# for output file
 
@@ -527,17 +527,6 @@ data_new = LInterp_1d(data, data_new, z_grid, 8)
 data_new = LInterp_1d(data, data_new, z_grid, 9)
 data_new = LInterp_1d(data, data_new, z_grid, 10)
 data_new = LInterp_1d(data, data_new, z_grid, 11)
-data_new = LInterp_1d(data, data_new, z_grid, 12)
-data_new = LInterp_1d(data, data_new, z_grid, 13)
-data_new = LInterp_1d(data, data_new, z_grid, 14)
-data_new = LInterp_1d(data, data_new, z_grid, 15)
-data_new = LInterp_1d(data, data_new, z_grid, 16)
-data_new = LInterp_1d(data, data_new, z_grid, 17)
-data_new = LInterp_1d(data, data_new, z_grid, 18)
-data_new = LInterp_1d(data, data_new, z_grid, 19)
-data_new = LInterp_1d(data, data_new, z_grid, 20)
-data_new = LInterp_1d(data, data_new, z_grid, 21)
-
 
 
 # lastly, set all altitude grids equal (to new grid) and add lat, lon, level
@@ -579,7 +568,7 @@ plt.show()
 # double all data, then save to new output file
 
 np.savetxt(new_file, data_new.reshape(NLAT * NLON * NTAU_new, NPARAMS),
-           fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E\t')
+           fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E\t')
 
 
 

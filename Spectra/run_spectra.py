@@ -9,8 +9,8 @@ import numpy as np
 import run_grid
 import time
 
-phases = [120.0]
-inclinations = [0.0]
+phases = [0.0, 60.0, 120.0, 180.0, 240.0, 300.0]
+inclinations = [0.0, 0.79, 1.57]
 sytem_obliquity = 0
 
 NTAU = 250
@@ -23,23 +23,13 @@ file_type = 'cloudy'
 # 1 is everything
 # 2 is Wind only
 # 3 is rotation only
-dopplers = [1]
+dopplers = [0]
 
-# Compact works, extended does not
-
-planet_name = 'UPS-LOW-G-COM-CLOUDY-250'
-
-#planet_name = "UPS-LOW-G-COM-CLOUDY"
-#planet_name = "UPS-LOW-G-EXT-CLOUDY"
-#planet_name = "UPS-BIG-G-COM-CLOUDY"
-
-# This one doesn't exist yet
-#planet_name = "UPS-BIG-G-COM-CLOUDY"
-
-
-#planet_name = "UPS-LOW-G-CLEAR"
-#planet_name = "UPS-BIG-G-CLEAR"
-
+#planet_name = 'UPS-BIG-G-CLEAR-250'
+#planet_name = 'UPS-BIG-G-COM-CLOUDY-250'
+#planet_name = 'UPS-LOW-G-CLEAR-250'
+#planet_name = 'UPS-LOW-G-COM-CLOUDY-250'
+#planet_name = 'UPS-LOW-G-EXT-CLOUDY-250'
 
 def add_columns(phases, inclinations):
     """For each phase and inclination, add some extra columns and double it
