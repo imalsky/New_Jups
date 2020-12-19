@@ -9,8 +9,8 @@ import numpy as np
 import run_grid
 import time
 
-phases = [0.0, 60.0, 120.0, 180.0, 240.0, 300.0]
-inclinations = [0.0, 0.79, 1.57]
+phases = [7]
+inclinations = [0.0]
 sytem_obliquity = 0
 
 NTAU = 250
@@ -29,7 +29,19 @@ dopplers = [0]
 #planet_name = 'UPS-BIG-G-COM-CLOUDY-250'
 #planet_name = 'UPS-LOW-G-CLEAR-250'
 #planet_name = 'UPS-LOW-G-COM-CLOUDY-250'
-#planet_name = 'UPS-LOW-G-EXT-CLOUDY-250'
+planet_name = 'UPS-LOW-G-EXT-CLOUDY-250'
+
+def get_run_lists(phases, inclinations):
+    for phase in phases:
+        for inc in inclinations:
+            phase = str(phase)
+            inc = str(inc)
+
+            input_paths.append('DATA/Final_' + planet_name + '_phase_{}_inc_{}.txt'.format(phase, inc))
+            inclination_strs.append(inc)
+            phase_strs.append(phase)
+
+    return input_paths, inclination_strs, phase_strs
 
 def add_columns(phases, inclinations):
     """For each phase and inclination, add some extra columns and double it
@@ -37,8 +49,6 @@ def add_columns(phases, inclinations):
     phases (list): a list of all the phases to run
     inclinations (list): a list of all the inclinations to run
     """
-
-
     for phase in phases:
         for inc in inclinations:
             phase = str(phase)
@@ -71,12 +81,8 @@ def add_columns(phases, inclinations):
             numpy_df = doubled.to_numpy()
 
             final_path = 'DATA/Final_' + planet_name + '_phase_{}_inc_{}.txt'.format(phase, inc)
-            input_paths.append(final_path)
-            inclination_strs.append(inc)
-            phase_strs.append(phase)
             np.savetxt(final_path, numpy_df,
             fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E\t')
-    return input_paths, inclination_strs, phase_strs
 
 
 def run_exo(input_paths, inclination_strs, phase_strs, doppler_val):
@@ -139,9 +145,10 @@ output_paths = []
 inclination_strs = []
 phase_strs = []
 
-run_grid.run_all_grid(planet_name, phases, inclinations, sytem_obliquity, NTAU, NLAT, NLON, file_type)
+#run_grid.run_all_grid(planet_name, phases, inclinations, sytem_obliquity, NTAU, NLAT, NLON, file_type)
+#add_columns(phases, inclinations)
 
-input_paths, inclination_strs, phase_strs = add_columns(phases, inclinations)
+input_paths, inclination_strs, phase_strs = get_run_lists(phases, inclinations)
 
 for doppler_val in dopplers:
     run_exo(input_paths, inclination_strs, phase_strs, doppler_val)

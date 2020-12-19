@@ -7,7 +7,6 @@ from scipy.interpolate import RectBivariateSpline
 
 def run_all_grid(planet_name, phases,inclinations, system_obliquity, NTAU, NLAT, NLON, file_type):
     print ('Running the regridding')
-    # This regrids all the stuff
 
     def df_to_txt(file, df):
         np.savetxt(file, df.values, fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E\t')
