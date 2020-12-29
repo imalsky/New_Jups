@@ -7,9 +7,8 @@ import sys
 import pandas as pd
 import numpy as np
 import run_grid
-import time
 
-phases = [7]
+phases = [180.0]
 inclinations = [0.0]
 sytem_obliquity = 0
 
@@ -17,7 +16,6 @@ NTAU = 250
 NLAT = 48
 NLON = 96
 CLOUDS = 0
-file_type = 'cloudy'
 
 # 0 is off
 # 1 is everything
@@ -30,6 +28,12 @@ dopplers = [0]
 #planet_name = 'UPS-LOW-G-CLEAR-250'
 #planet_name = 'UPS-LOW-G-COM-CLOUDY-250'
 planet_name = 'UPS-LOW-G-EXT-CLOUDY-250'
+
+grid_lat_min = -87.16
+grid_lat_max = 87.16
+grid_lon_min = 0.0
+grid_lon_max = 356.25
+system_obliquity = 0 
 
 def get_run_lists(phases, inclinations):
     for phase in phases:
@@ -145,10 +149,17 @@ output_paths = []
 inclination_strs = []
 phase_strs = []
 
-#run_grid.run_all_grid(planet_name, phases, inclinations, sytem_obliquity, NTAU, NLAT, NLON, file_type)
+
+
+
+
+#run_grid.run_all_grid(planet_name, phases, inclinations, system_obliquity, NTAU, NLAT, NLON, grid_lat_min, grid_lat_max, grid_lon_min, grid_lon_max)
+
 #add_columns(phases, inclinations)
 
 input_paths, inclination_strs, phase_strs = get_run_lists(phases, inclinations)
+
+print (input_paths, inclination_strs, phase_strs)
 
 for doppler_val in dopplers:
     run_exo(input_paths, inclination_strs, phase_strs, doppler_val)

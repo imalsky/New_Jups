@@ -157,6 +157,11 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     W0[J] = w0_array[J+kmin];
     G0[J] = g0_array[J+kmin];
 
+
+    W0[J] = 0.5;
+    G0[J] = 0.2;
+
+
     TEMPS[J] = temperature_array[J+kmin];
     DTAUS[J] = dtau_array[J+kmin];
 
@@ -446,6 +451,7 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     e2[J]   =  1.0 - GAMMA[J] * temp_e_val[J];  //e2                      
     e3[J]   =  GAMMA[J] + temp_e_val[J];        //e3                        
     e4[J]   =  GAMMA[J] - temp_e_val[J];        //e4
+
   }
 
 
@@ -513,6 +519,7 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
              (pow(LAMBDAS[J], 2.0) - (1.0 / pow(mu_0, 2.0)));
   }
 
+
   J = 0;
   for(L=1; L<2*NEW_NLAYER-1; L+=2)
   {
@@ -522,13 +529,13 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     // HERE ARE THE ODD MATRIX ELEMENTS EXCEPT FOR THE TOP.
     E[L+1] = e3[J] * (CP[J+1] - CPB[J]) + e1[J] * (CMB[J] - CM[J+1]);
     J = J + 1;
+
   }
 
   // HERE ARE THE TOP AND BOTTOM BOUNDARY CONDITIONS AS WELL AS THE
   // BEGINNING OF THE TRIDIAGONAL SOLUTION DDINITIONS. I ASSUME NO
   // DIFFUSE RADIATION IS INCIDENT AT THE TOP.
 
-  //E[0] = FLUX_SURFACE_QUADRATURE-CM[0];
   E[0] = -CM[0];
   E[2*NEW_NLAYER-1]  = SFCS_HEMISPHERIC + RSFX * CMB[2*NEW_NLAYER-1] - CPB[2*NEW_NLAYER-1]  ;
   DS[2*NEW_NLAYER-1] = E[2*NEW_NLAYER-1] / B[2*NEW_NLAYER-1];
@@ -544,12 +551,13 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     AS[2*NEW_NLAYER-L] = A[2*NEW_NLAYER-L] * X[2*NEW_NLAYER-L];
     DS[2*NEW_NLAYER-L] = (E[2*NEW_NLAYER-L] - D[2*NEW_NLAYER-L] * DS[2*NEW_NLAYER-L+1]) * X[2*NEW_NLAYER-L];
   }
-  
+
   Y[0] = DS[0];
   for(L=1; L<2*NEW_NLAYER; L++)
   {
     Y[L] = DS[L] - AS[L] * Y[L-1];
   }
+
 
   //***************************************************************
   //  CALCULATE LAYER CODFICIENTS, NET FLUX AND MEAN INTENSITY
@@ -564,10 +572,10 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     QUADRATURE_TWO_STREAM[J] = TMI[J];
   }
 
-  if (HEMISPHERIC_SOURCE_FNC[0] * 20 < fabs(QUADRATURE_TWO_STREAM[0] / (4.0 * PI)))
-  {
-    QUADRATURE_TWO_STREAM[0] = 0.0;
-  }
+  //if (HEMISPHERIC_SOURCE_FNC[0] * 20 < fabs(QUADRATURE_TWO_STREAM[0] / (4.0 * PI)))
+  //{
+  //  QUADRATURE_TWO_STREAM[0] = 0.0;
+  //}
 
-  return HEMISPHERIC_SOURCE_FNC[0];
+  return HEMISPHERIC_SOURCE_FNC[0] + QUADRATURE_TWO_STREAM[1];
 }

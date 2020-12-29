@@ -5,7 +5,7 @@ from scipy.interpolate import RectBivariateSpline
 
 
 
-def run_all_grid(planet_name, phases,inclinations, system_obliquity, NTAU, NLAT, NLON, file_type):
+def run_all_grid(planet_name, phases, inclinations, system_obliquity, NTAU, NLAT, NLON, grid_lat_min, grid_lat_max, grid_lon_min, grid_lon_max):
     print ('Running the regridding')
 
     def df_to_txt(file, df):
@@ -172,8 +172,8 @@ def run_all_grid(planet_name, phases,inclinations, system_obliquity, NTAU, NLAT,
                 sub_df = df[(df['level'] == level)].reset_index(drop=True)
                 sub_df = sub_df[(sub_df['temp'] > 100)]
 
-                t1 = np.round(np.linspace(min(full_df.lon), max(full_df.lon), int(NLON)), 3)
-                t2 = np.round(np.linspace(min(full_df.lat), max(full_df.lat), NLAT), 3)
+                t1 = np.round(np.linspace(grid_lon_min, grid_lon_max, NLON), 3)
+                t2 = np.round(np.linspace(grid_lat_min, grid_lat_max, NLAT), 3)
 
                 xx, yy = np.meshgrid(t1, t2)
                 
