@@ -21,6 +21,7 @@ CLOUDS = 0
 # 1 is everything
 # 2 is Wind only
 # 3 is rotation only
+# Test
 dopplers = [0]
 
 #planet_name = 'UPS-BIG-G-CLEAR-250'
