@@ -34,7 +34,8 @@ grid_lat_min = -87.16
 grid_lat_max = 87.16
 grid_lon_min = 0.0
 grid_lon_max = 356.25
-system_obliquity = 0 
+system_obliquity = 0
+#test
 
 def get_run_lists(phases, inclinations):
     for phase in phases:
