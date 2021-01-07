@@ -158,8 +158,8 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     G0[J] = g0_array[J+kmin];
 
 
-    W0[J] = 0.5;
-    G0[J] = 0.2;
+    W0[J] = 0.90;
+    G0[J] = 0.0;
 
 
     TEMPS[J] = temperature_array[J+kmin];

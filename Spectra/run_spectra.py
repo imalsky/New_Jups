@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 import run_grid
 
-phases = [180.0]
+phases = [0.0]
 inclinations = [0.0]
 sytem_obliquity = 0
 
@@ -26,9 +26,9 @@ dopplers = [0]
 
 #planet_name = 'UPS-BIG-G-CLEAR-250'
 #planet_name = 'UPS-BIG-G-COM-CLOUDY-250'
-#planet_name = 'UPS-LOW-G-CLEAR-250'
+planet_name = 'UPS-LOW-G-CLEAR-250'
 #planet_name = 'UPS-LOW-G-COM-CLOUDY-250'
-planet_name = 'UPS-LOW-G-EXT-CLOUDY-250'
+#planet_name = 'UPS-LOW-G-EXT-CLOUDY-250'
 
 grid_lat_min = -87.16
 grid_lat_max = 87.16

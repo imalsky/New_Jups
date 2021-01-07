@@ -460,10 +460,8 @@ int RT_Emit_3D(double PHASE)
                         phi[l][m] = phi_lon_solid[l][m][0]* PI/180.0;
                     }
                 }
-                // Sometimes these go negative and should not lol
-                // Love Isaac
-                dphi[l][m] = fabs(dphi[l][m]);
-                dtheta[l][m] = fabs(dtheta[l][m]);
+                
+                
                 
                 solid += SQ(cos(theta[l][m]))*cos(phi[l][m]-PI)*dtheta[l][m]*dphi[l][m];
             }
@@ -528,7 +526,7 @@ int RT_Emit_3D(double PHASE)
                             
                             
                             // C HARADA -- update for 2stream //
-                            if (temperature < 300 || dtau_em[l][m][j] < 1e-50)
+                            if (temperature < 100 || dtau_em[l][m][j] < 1e-90)
                             {
                                 pi0_tot[l][m][j] = 0.0;
                                 asym_tot[l][m][j] = 0.0;
@@ -700,12 +698,14 @@ int RT_Emit_3D(double PHASE)
                             }
                             else
                             {
-                                kappa_nu = lint2D(opac.T[g], opac.T[g+1], opac.P[h],
-                                                  opac.P[h+1], opac.kappa[i][h][g],
+                                kappa_nu = lint2D(opac.T[g], opac.T[g+1],
+                                                  opac.P[h], opac.P[h+1],
+                                                  opac.kappa[i][h][g],
                                                   opac.kappa[i][h][g+1],
                                                   opac.kappa[i][h+1][g],
                                                   opac.kappa[i][h+1][g+1],
                                                   temperature, pressure);
+
                                 
                                 /* add aerosol opacities if clouds turned on */
                                 if (CLOUDS==1) {

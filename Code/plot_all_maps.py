@@ -14,7 +14,7 @@ Plots 2d temp and cloud map at some altitude (3 cases)
 
 ### ----- INPUT/OUTPUT CONTROL ----- ###
 
-cases = ['CLOUDY', 'CLEAR']
+cases = ['LOW', 'BIG']
 
 output_file = 'malsky-testing'
 
@@ -24,9 +24,12 @@ output_file = 'malsky-testing'
 import numpy as np 
 import matplotlib as mpl
 from matplotlib import rcParams, rc
+
 import matplotlib.pyplot as plt 
 import matplotlib.colors as mcolors
 from scipy.interpolate import interp2d
+import matplotlib.colors as colors
+
 
 
 # set rcParams ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,7 +63,7 @@ plt.subplots_adjust(wspace=0.05, hspace=0.05)
 
 
 
-P_phot = 26     # pressure level to probe [mbar; IR photosphere: 26 mbar]
+P_phots = [1, 1]     # pressure level to probe [mbar; IR photosphere: 26 mbar]
 
 # file info
 nlat = 48
@@ -69,19 +72,23 @@ nlevel = 250
 nparams = 22
 
 
-temp_low = 750
-temp_high = 2250
+temp_low = 500
+temp_high = 2500
 
 clouds_low = 0.0
-clouds_high = 0.68     # thick
+clouds_high = 0.075     # thick
 #clouds_high = 0.068     # thin
+
+clouds_list = []
 
 
 for ind, case in enumerate(cases):
+    P_phot = P_phots[ind]
+
 
     ### ----- LOAD DATA FROM FILE ----- ###
 
-    cloudreport = f'/home/imalsky/Desktop/New_Jups/Spectra/DATA/Final_UPS-LOW-G-{case}-250_phase_0.0_inc_0.txt'
+    cloudreport = f'/home/imalsky/Desktop/New_Jups/Spectra/DATA/Final_UPS-{case}-G-CLEAR-250_phase_0.0_inc_0.0.txt'
 
     print()
     print('Reading data...')
@@ -126,25 +133,29 @@ for ind, case in enumerate(cases):
     for i in range(nlat):
         for j in range(nlon):
 
+            z[i][j] = data[i][j][int(pressure_ind[i][j])][3]
+            pressures[i][j] = data[i][j][int(pressure_ind[i][j])][4]
             temps[i][j] = data[i][j][int(pressure_ind[i][j])][5]
             EW_vels[i][j] = data[i][j][int(pressure_ind[i][j])][6]
             NS_vels[i][j] = data[i][j][int(pressure_ind[i][j])][7]
             vert_vels[i][j] = data[i][j][int(pressure_ind[i][j])][8]
-            pressures[i][j] = data[i][j][int(pressure_ind[i][j])][4]
-            z[i][j] = data[i][j][int(pressure_ind[i][j])][3]
+
 
 
 
             # integrate aerosol optical depth above pressure level
             k = 0
-            while k <= pressure_ind[i][j]:
+
+            # Something really funky is going on here
+            while k <= int(pressure_ind[i][j]):
 
                 # conversion to 2.3 microns
-                taus[i][j] += data[i][j][k][9] * (0.07 / 0.01)
-                taus[i][j] += data[i][j][k][12] * (1.25 / 0.16)
-                taus[i][j] += data[i][j][k][15] * (0.12 / 0.02)
-                taus[i][j] += data[i][j][k][18] * (0.56 / 0.02)
+                taus[i][j] += data[i][j][k][9] * (0.07 / 0.01) * 0.2 # This 0.2 is because there are 5x more layers
+                taus[i][j] += data[i][j][k][12] * (1.25 / 0.16) * 0.2
+                taus[i][j] += data[i][j][k][15] * (0.12 / 0.02) * 0.2
+                taus[i][j] += data[i][j][k][18] * (0.56 / 0.02) * 0.2
 
+                # The clouds have extremely high optical depths
                 k += 1
             
 
@@ -162,10 +173,11 @@ for ind, case in enumerate(cases):
 
     # temp colormap
     cm_name = 'lajolla'
-    cm_file = np.loadtxt(f'/home/imalsky/Desktop/ScientificColourMaps5/{cm_name}/{cm_name}.txt')
+    cm_file = np.loadtxt(f'ScientificColourMaps5/{cm_name}/{cm_name}.txt')
     cm_file = np.flip(cm_file, axis=0)
     my_colors = mcolors.LinearSegmentedColormap.from_list(cm_name, cm_file)
 
+    print ('temp:', np.amin(temps), np.amax(temps))
     temp_map = axes[0][ind].contourf(lons, lats, temps, cmap=my_colors, levels=np.arange(temp_low, temp_high, 25))
     temp_map = axes[0][ind].contourf(lons, lats, temps, cmap=my_colors, levels=np.arange(temp_low, temp_high, 25))
 
@@ -177,7 +189,7 @@ for ind, case in enumerate(cases):
 
     # cloud colormap
     cm_name = 'devon'
-    cm_file = np.loadtxt(f'/home/imalsky/Desktop/ScientificColourMaps5/{cm_name}/{cm_name}.txt')
+    cm_file = np.loadtxt(f'ScientificColourMaps5/{cm_name}/{cm_name}.txt')
     my_colors = mcolors.LinearSegmentedColormap.from_list(cm_name, cm_file)
 
 
@@ -190,13 +202,10 @@ for ind, case in enumerate(cases):
     XX, YY = np.meshgrid(lons_new, lats_new)
     clouds_new = interp_cloud(lons_new, lats_new)
 
-
-
-    #cloud_map = axes[1][ind].contourf(XX, YY, clouds_new, cmap=my_colors, levels=np.arange(clouds_low, clouds_high, 0.005))
-    cloud_map = axes[1][ind].contourf(XX, YY, clouds_new, cmap=my_colors)
-
-
-
+    print ('max', np.amax(clouds_new))
+    #cloud_map = axes[1][ind].contourf(XX, YY, np.log10(clouds_new + 0.00001), cmap=my_colors, levels=np.arange(-2, 3.5, 0.01))
+    cloud_map = axes[1][ind].contourf(XX, YY, clouds_new, cmap=my_colors, levels=np.linspace(0, 7.5, 100))
+    #axes[1][ind].set_facecolor(my_colors(0))
 
 
 # format axes
@@ -228,7 +237,9 @@ for ax in axes.flatten():
 
 
 
-temp_cbar = fig.colorbar(temp_map, ax=axes.ravel().tolist(), location='top', aspect=80, pad=0.02)
+temp_cbar = fig.colorbar(temp_map, ax=axes.ravel().tolist(), 
+                         norm=colors.LogNorm(vmin=0, vmax=1000),
+                         location='top', aspect=80, pad=0.02)
 temp_cbar.set_label('Temperature (K)', size=18, weight='bold')
 
 cloud_cbar = fig.colorbar(cloud_map, ax=axes.ravel().tolist(), location='bottom', aspect=80, pad=0.02)
@@ -237,7 +248,7 @@ cloud_cbar.set_label('Cloud Optical Depth, 2.3 $\\mu$m', size=18, weight='bold')
 print('Creating plot DONE')
 
 
-fig.savefig(f'/home/imalsky/Desktop/{output_file}_{P_phot}mbar.pdf', bbox_inches='tight', dpi=400)
+fig.savefig(f'/home/imalsky/Desktop/{output_file}_{P_phot}mbar.png', bbox_inches='tight', dpi=500)
 
 
 

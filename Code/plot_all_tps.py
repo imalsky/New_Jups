@@ -12,36 +12,31 @@ Map temperature inversions and show TP profiles (2 cases)
 
 ### ----- INPUT/OUTPUT CONTROL ----- ###
 
-cases = ['clear', 'extended_thick']
-condensation_data = '/Users/calebharada/3D_RT_Code/charada/cloudreports/NEW/Condensation_Ts.dat'        # condensation curves
-output_file = 'fig/tps_compare.pdf'
+cases = ['LOW', 'BIG']
+#condensation_data = '/Users/calebharada/3D_RT_Code/charada/cloudreports/NEW/Condensation_Ts.dat'        # condensation curves
+output_file = '/home/imalsky/Desktop/LOW_BIG.png'
 
 
 fontsize = 14
 
 Tmin = 0
-Tmax = 1400
+Tmax = 400
 
 # file info
 NLAT = 48
-NLON = 193
-NTAU = 250
-NPARAMS = 21
-
+NLON = 96
+NTAU = 50
+NPARAMS = 12
 
 
 ### ----- IMPORT LIBRARIES ----- ###
 
-import numpy as np 
-import matplotlib as mpl
-import matplotlib.pyplot as plt 
+import numpy as np
+import matplotlib.pyplot as plt
 from matplotlib import rcParams, rc
 import matplotlib.colors as mcolors
 import matplotlib.ticker as ticker
-from matplotlib.patches import Circle
-from mpl_toolkits.axes_grid1.axes_divider import make_axes_locatable
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from scipy.interpolate import interp2d
 
 
 
@@ -77,28 +72,22 @@ plt.subplots_adjust(wspace=0.05, hspace=0.05)
 
 
 
-
-
 for ind, case in enumerate(cases):
 
     ### ----- LOAD DATA FROM FILE ----- ###
-    cloudreport = f'/Users/calebharada/3D_RT_Code/charada/cloudreports/NEW/TP_3D--cloudreport_{case}_NTAU_250.dat'   # use doubled data grid
+    cloudreport = f'/home/imalsky/Desktop/UPS-PLANETS/OG-GCM-OUTPUT/UPS-{case}-G-CLEAR.txt'
 
 
     print('Reading data...')
-    data = np.loadtxt(cloudreport)
+    data = np.loadtxt(cloudreport, skiprows=5)
     print('Reading data DONE')
 
 
     # separate data into more convenient arrays
     data = data.reshape((NLAT, NLON, NTAU, NPARAMS))
 
-
-
-    lons = data[:,:,0,1][0] - 360
+    lons = data[:,:,0,1][0] - 180
     lats = data[:,:,0,0][:,0]
-
-
 
     ### ----- CALCULATE TEMP INVERSIONS FOR PLOTTING ----- ###
 
@@ -143,10 +132,10 @@ for ind, case in enumerate(cases):
     my_colors = mcolors.LinearSegmentedColormap.from_list(cm_name, cm_file)
 
     # add temperature map (must do twice to get rid of contour artifacts)
-    temp_map = axes[1][ind].contourf(lons, lats, delta_temps, cmap=my_colors, 
-        levels=np.arange(Tmin, Tmax, 25))
-    temp_map = axes[1][ind].contourf(lons, lats, delta_temps, cmap=my_colors, 
-        levels=np.arange(Tmin, Tmax, 25))
+    temp_map = axes[1][ind].contourf(lons, lats, delta_temps, cmap=my_colors,
+        levels=np.arange(Tmin, Tmax, 10))
+    temp_map = axes[1][ind].contourf(lons, lats, delta_temps, cmap=my_colors,
+        levels=np.arange(Tmin, Tmax, 10))
 
     # format temp axes
     axes[1][ind].set_xlim([-180, 180])
@@ -188,15 +177,15 @@ for ind, case in enumerate(cases):
 
 
 
-    
+
     # plot all TP-profiles (expensive)
     for i in range(NLAT):
 
         for j in range(96):
 
-            axes[0][ind].semilogy(data[i][j][:,5], data[i][j][:,4]*1e-5, '-', 
+            axes[0][ind].semilogy(data[i][j][:,5], data[i][j][:,4], '-',
                 lw=1, alpha=0.5, color=(0.5, 0.5, 0.5))
-    
+
 
     colors = np.linspace(0, 1, 96)
 
@@ -212,14 +201,13 @@ for ind, case in enumerate(cases):
     # plot colored equatorial TP-profiles
     for i in range(96):
 
-        axes[0][ind].semilogy(data[24][i][:,5], data[24][i][:,4]*1e-5, '-', 
-            lw=1, alpha=0.9, color=my_colors(colors[color_idx]))
-
-        #print(data[24][i][:,0])
+        if max(data[24][i][:,5] < 3000):
+            axes[0][ind].semilogy(data[24][i][:,5], data[24][i][:,4], '-',
+                lw=1, alpha=0.9, color=my_colors(colors[color_idx]))
 
         color_idx += 1
 
-
+    """
     # plot cloud condensation curves
     press_con, MgSiO3_cond, Fe_cond, Al2O3_cond, MnS_cond = np.loadtxt(condensation_data, usecols=(0,14,10,13,4), unpack=True)
 
@@ -238,7 +226,7 @@ for ind, case in enumerate(cases):
     axes[0][ind].semilogy(MnS_cond, press_con, 'k-', lw=2)
     axes[0][ind].semilogy(MnS_cond, press_con, 'w-', lw=1)
     axes[0][ind].text(1450, 10, 'MnS', rotation=-70, fontsize=10)
-
+    """
 
 
     axes[0][ind].set_xlim([400, 3300])
@@ -249,7 +237,7 @@ for ind, case in enumerate(cases):
 
     axes[0][ind].invert_yaxis()
     axes[0][ind].xaxis.set_ticks_position('top')
-    axes[0][ind].xaxis.set_label_position('top') 
+    axes[0][ind].xaxis.set_label_position('top')
     axes[0][ind].set_xlabel('Temperature (K)', weight='bold')
 
 
@@ -278,16 +266,9 @@ temp_cbar.set_label('Max. Temperature Inversion (K)', weight='bold')
 
 
 
-
-
 print('Creating plot DONE')
 
-
-
-
 fig.savefig(output_file, bbox_inches='tight', dpi=300)
-
-
 
 
 
