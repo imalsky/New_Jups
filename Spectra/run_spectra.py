@@ -9,32 +9,32 @@ import numpy as np
 import run_grid
 
 phases = [0.0]
-inclinations = [0.0]
+inclinations = [1.152]
 sytem_obliquity = 0
 
 NTAU = 250
 NLAT = 48
 NLON = 96
-CLOUDS = 0
+CLOUDS = 1
 
 # 0 is off
 # 1 is everything
 # 2 is Wind only
 # 3 is rotation only
 # Test
-dopplers = [0]
+dopplers = [1]
 
 #planet_name = 'UPS-BIG-G-CLEAR-250'
 #planet_name = 'UPS-BIG-G-COM-CLOUDY-250'
-planet_name = 'UPS-LOW-G-CLEAR-250'
-#planet_name = 'UPS-LOW-G-COM-CLOUDY-250'
+#planet_name = 'UPS-LOW-G-CLEAR-250'
+planet_name = 'UPS-LOW-G-COM-CLOUDY-250'
 #planet_name = 'UPS-LOW-G-EXT-CLOUDY-250'
 
 grid_lat_min = -87.16
 grid_lat_max = 87.16
 grid_lon_min = 0.0
 grid_lon_max = 356.25
-system_obliquity = 0
+system_obliquity = 1
 
 def get_run_lists(phases, inclinations):
     for phase in phases:

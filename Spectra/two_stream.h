@@ -157,11 +157,6 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     W0[J] = w0_array[J+kmin];
     G0[J] = g0_array[J+kmin];
 
-
-    W0[J] = 0.90;
-    G0[J] = 0.0;
-
-
     TEMPS[J] = temperature_array[J+kmin];
     DTAUS[J] = dtau_array[J+kmin];
 
@@ -170,7 +165,7 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
 
     DIRECT_QUADRATURE[J]  = mu_0 * PI * FLUX_SURFACE_QUADRATURE * exp(-1.0 * (TAUCS[J] + TAULS[J]) / mu_0);
     DIRECT_HEMISPHERIC[J] = 0.0;
-
+    
   }
 
   // Calculate the intensity at the top of the atmosphere
@@ -411,7 +406,6 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
 
 
 
-
   //***************************************************************************************
   //***************************************************************************************
   //***************************************************************************************
@@ -576,6 +570,7 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   //{
   //  QUADRATURE_TWO_STREAM[0] = 0.0;
   //}
+  return HEMISPHERIC_SOURCE_FNC[0];
 
-  return HEMISPHERIC_SOURCE_FNC[0] + QUADRATURE_TWO_STREAM[1];
+  //return HEMISPHERIC_SOURCE_FNC[0] + QUADRATURE_TWO_STREAM[1];
 }

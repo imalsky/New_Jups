@@ -61,6 +61,8 @@ int RT_Emit_3D(double PHASE)
     aero_lw_kappa_interp_2,
     aero_lw_kappa_interp_3,
     aero_lw_kappa_interp_4;
+    double total_cloud_kappa;
+    double cloud_param;
     double **I_top, *I_bot, **dkappa_nu;
     int i, j, k, l, m, n, o, c, g, h, ii;
     double dphid, thetad, dthetad;
@@ -329,10 +331,12 @@ int RT_Emit_3D(double PHASE)
             }
         }
         
-        for(l=0; l<NLAT; l++){
-            for(m=0; m<NLON; m++){
-                for(j=0; j<NTAU; j++){
-                    
+        for(l=0; l<NLAT; l++)
+        {
+            for(m=0; m<NLON; m++)
+            {
+                for(j=0; j<NTAU; j++)
+                {
                     aero_lw_kappa_1[l][m][j] = aero_lw_tau_1[l][m][j] / ds[j];
                     aero_lw_kappa_2[l][m][j] = aero_lw_tau_2[l][m][j] / ds[j];
                     aero_lw_kappa_3[l][m][j] = aero_lw_tau_3[l][m][j] / ds[j];
@@ -347,7 +351,6 @@ int RT_Emit_3D(double PHASE)
     /*Calculating dl longitude and latitude along line-of-sight*/
     for(l=0;l<NLAT;l++)
     {
-        
         lat_rad[l] = atmos.lat[l] * PI/180.0; /*theta, latitude*/
         
         for(m=0;m<NLON;m++)
@@ -401,9 +404,7 @@ int RT_Emit_3D(double PHASE)
                 
                 dtheta[0][m] = ( 0.5*(theta_lat_solid[1][m][0]+theta_lat_solid[0][m][0]) + 90)* PI/180.0;
                 dtheta[NLAT-1][m] = (90 - 0.5*(theta_lat_solid[NLAT-1][m][0]+theta_lat_solid[NLAT-2][m][0]))* PI/180.0;
-                
-                // printf("%e\n", theta_lat_solid[l][m][0]);
-                
+                                
                 if(m>0 && m<NLON-1)
                 {
                     if(atmos.lon[m]>450.0-PHASE && atmos.lon[m]<630.0-PHASE)
@@ -461,15 +462,23 @@ int RT_Emit_3D(double PHASE)
                     }
                 }
                 
+                // Every once in a while dphi becomes negative and it should not be
+                dtheta[l][m] = fabs(dtheta[l][m]);
+                if (dphi[l][m] < 0)
+                {
+                    dphi[l][m] = 0.01;
+                }
+                theta[l][m]  = fabs(theta[l][m]);
                 
-                
+
                 solid += SQ(cos(theta[l][m]))*cos(phi[l][m]-PI)*dtheta[l][m]*dphi[l][m];
             }
         }
     }
     printf("solid %f\n", solid);
     
-    for(i=0; i<NLAMBDA; i++)
+    //for(i=0; i<NLAMBDA; i++)
+    for(i=500; i<1000; i++)
     {
         for(l=0; l<NLAT; l++)
         {
@@ -489,6 +498,7 @@ int RT_Emit_3D(double PHASE)
             {
                 if(atmos.lon[m]>=450.0-PHASE && atmos.lon[m]<=630.0-PHASE)
                 {
+                    //printf("\n\n\n");
                     for(j=0; j<NTAU; j++)
                     {
                         Locate(NLAT, atmos.lat, theta_lat_solid[l][m][j], &o);
@@ -501,101 +511,23 @@ int RT_Emit_3D(double PHASE)
                             temperature = 0.0;
                             temperature_3d[l][m][j] = temperature;
                         }
+
                         else
                         {
                             temperature = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], atmos.T_3d[o][c][j], atmos.T_3d[o][c+1][j], atmos.T_3d[o+1][c][j], atmos.T_3d[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
                             temperature_3d[l][m][j] = temperature;
-
-                            
                         }
-                        
-                        /* interpolate aero kappas anf calculate total g0 and pi0 values, if clouds on */
-                        if(CLOUDS==1){
-                            {
-                                aero_lw_kappa_interp_1 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_1[o][c][j], aero_lw_kappa_1[o][c+1][j], aero_lw_kappa_1[o+1][c][j], aero_lw_kappa_1[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
-                            }
-                            {
-                                aero_lw_kappa_interp_2 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_2[o][c][j], aero_lw_kappa_2[o][c+1][j], aero_lw_kappa_2[o+1][c][j], aero_lw_kappa_2[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
-                            }
-                            {
-                                aero_lw_kappa_interp_3 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_3[o][c][j], aero_lw_kappa_3[o][c+1][j], aero_lw_kappa_3[o+1][c][j], aero_lw_kappa_3[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
-                            }
-                            {
-                                aero_lw_kappa_interp_4 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_4[o][c][j], aero_lw_kappa_4[o][c+1][j], aero_lw_kappa_4[o+1][c][j], aero_lw_kappa_4[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
-                            }
-                            
-                            
-                            // C HARADA -- update for 2stream //
-                            if (temperature < 100 || dtau_em[l][m][j] < 1e-90)
-                            {
-                                pi0_tot[l][m][j] = 0.0;
-                                asym_tot[l][m][j] = 0.0;
-                                
-                            }
-                            
-                            else
-                            {
-                                double weight_1 = aero_lw_kappa_interp_1 * dl[l][m][j] / dtau_em[l][m][j];
-                                double weight_2 = aero_lw_kappa_interp_2 * dl[l][m][j] / dtau_em[l][m][j];
-                                double weight_3 = aero_lw_kappa_interp_3 * dl[l][m][j] / dtau_em[l][m][j];
-                                double weight_4 = aero_lw_kappa_interp_4 * dl[l][m][j] / dtau_em[l][m][j];
-                                                                
-                                pi0_tot[l][m][j] =  (weight_1 * PI0_MgSiO3 + \
-                                                    weight_2 * PI0_Fe + \
-                                                    weight_3 * PI0_Al2O3 + \
-                                                    weight_4 * PI0_MnS);
-                                
-                                asym_tot[l][m][j] = (weight_1 * G0_MgSiO3 + \
-                                                    weight_2 * G0_Fe + \
-                                                    weight_3 * G0_Al2O3 + \
-                                                    weight_4 * G0_MnS);
-                                
-                                
-                                if (pi0_tot[l][m][j] < 0.0 || pi0_tot[l][m][j] > 1.0)
-                                {
-                                   printf("pi0 total out of range at %i, %i, %i \n", l, m, j);
-                                }
-                                if (asym_tot[l][m][j] < -1.0 || asym_tot[l][m][j] > 1.0)
-                                {
-                                   printf("g0 total out of range at %i, %i, %i \n", l, m, j);
-                                }
-                                
-                                
-                            }
-
-                        }
-                        
-                        /* if clouds are turned off, need to set scattering params to zero */
-                        else
-                        {
-                            pi0_tot[l][m][j] = 0.0;
-                            asym_tot[l][m][j] = 0.0;
-                        }
-                        
-                    
                         
                         Locate(NTEMP, opac.T, temperature, &g);
                         Locate(NPRESSURE, opac.P, pressure, &h);
-                        
+
+
                         /* Add doppler shift to signal, if turned on */
-                        
                         if(DOPPLER==1){
                             u_vel = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], atmos.vel_ew[o][c][j], atmos.vel_ew[o][c+1][j], atmos.vel_ew[o+1][c][j], atmos.vel_ew[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
-                            
                             v_vel = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], atmos.vel_ns[o][c][j], atmos.vel_ns[o][c+1][j], atmos.vel_ns[o+1][c][j], atmos.vel_ns[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
-                            
-                            w_vel = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], atmos.vel_ve[o][c][j], atmos.vel_ve[o][c+1][j], atmos.vel_ve[o+1][c][j], atmos.vel_ve[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
-                            
+                            w_vel = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], atmos.vel_ve[o][c][j], atmos.vel_ve[o][c+1][j], atmos.vel_ve[o+1][c][j], atmos.vel_ve[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);     
                             v_los = u_vel*sin(phi_lon_solid[l][m][j]*PI/180.0) + v_vel*cos(phi_lon_solid[l][m][j]*PI/180.0)*sin(theta_lat_solid[l][m][j]*PI/180.0) - w_vel*cos(phi_lon_solid[l][m][j]*PI/180.0)*cos(theta_lat_solid[l][m][j]*PI/180.0) + omega*(R_PLANET + atmos.alt[j])*sin(phi_lon_solid[l][m][j]*PI/180.0)*cos(theta_lat_solid[l][m][j]*PI/180.0) + R_VEL*cos((90.0-PHASE)*PI/180.0); /*Everything*/
-                            
-                            /* v_los = u_vel*sin(phi_lon_solid[l][m][j]*PI/180.0) + v_vel*cos(phi_lon_solid[l][m][j]*PI/180.0)*sin(theta_lat_solid[l][m][j]*PI/180.0); */ /*ewns*/
-                            
-                            /* v_los =  - w_vel*cos(phi_lon_solid[l][m][j]*PI/180.0)*cos(theta_lat_solid[l][m][j]*PI/180.0); */ /*vertical*/
-                            
-                            /* v_los = u_vel*sin(phi_lon_solid[l][m][j]*PI/180.0) + v_vel*cos(phi_lon_solid[l][m][j]*PI/180.0)*sin(theta_lat_solid[l][m][j]*PI/180.0) - w_vel*cos(phi_lon_solid[l][m][j]*PI/180.0)*cos(theta_lat_solid[l][m][j]*PI/180.0); */ /*wind*/
-                            
-                            /* v_los = omega*(R_PLANET + atmos.alt[j])*sin(phi_lon_solid[l][m][j]*PI/180.0)*cos(theta_lat_solid[l][m][j]*PI/180.0) + R_VEL*cos((90.0-PHASE)*PI/180.0); */ /*rotation*/
-                            
                             
                             
                             delta_lam = atmos.lambda[i]*v_los/CLIGHT;
@@ -618,19 +550,13 @@ int RT_Emit_3D(double PHASE)
                                                   opac.kappa[ii+1][h][g+1],
                                                   opac.kappa[ii+1][h+1][g],
                                                   opac.kappa[ii+1][h+1][g+1],
-                                                  temperature, pressure, atmos.lambda[i]+delta_lam);
-                                
-                                /* add aerosol opacities if clouds turned on */
-                                if (CLOUDS==1) {
-                                    kappa_nu += aero_lw_kappa_interp_1 + aero_lw_kappa_interp_2 + aero_lw_kappa_interp_3 + aero_lw_kappa_interp_4;
-                                }
-                                
+                                                  temperature, pressure, atmos.lambda[i]+delta_lam);                                
                             }
                         }
 
-
                         /* Wind Only */
-                        else if(DOPPLER==2){
+                        else if(DOPPLER==2)
+                        {
                             u_vel = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], atmos.vel_ew[o][c][j], atmos.vel_ew[o][c+1][j], atmos.vel_ew[o+1][c][j], atmos.vel_ew[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
                             v_vel = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], atmos.vel_ns[o][c][j], atmos.vel_ns[o][c+1][j], atmos.vel_ns[o+1][c][j], atmos.vel_ns[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
                             w_vel = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], atmos.vel_ve[o][c][j], atmos.vel_ve[o][c+1][j], atmos.vel_ve[o+1][c][j], atmos.vel_ve[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
@@ -689,9 +615,9 @@ int RT_Emit_3D(double PHASE)
                             }
                         }
 
-
-                        
-                        else{
+                        /* No Doppler Effects at all */
+                        else
+                        {
                             if(temperature < 100.0)
                             {
                                 kappa_nu = 0.0;
@@ -705,33 +631,77 @@ int RT_Emit_3D(double PHASE)
                                                   opac.kappa[i][h+1][g],
                                                   opac.kappa[i][h+1][g+1],
                                                   temperature, pressure);
-
-                                
-                                /* add aerosol opacities if clouds turned on */
-                                if (CLOUDS==1) {
-                                    kappa_nu += aero_lw_kappa_interp_1 + aero_lw_kappa_interp_2 + aero_lw_kappa_interp_3 + aero_lw_kappa_interp_4;
-                                }
-                            }
-                        }
-                        
-                        if(kappa_nu < 0.0)
-                        {
-                            printf("WARNING: kappa_nu < 0 at %i, %i, %i \n", l, m, j);
-                            
-                            if (j > 0)
-                            {
-                                kappa_nu = dtau_em[l][m][j-1] / dl[l][m][j-1];
-                            }
-                            else
-                            {
-                                kappa_nu = 0.0;
                             }
                         }
 
-                        dtau_em[l][m][j] = kappa_nu * dl[l][m][j];
+
+
+
                         kappa_nu_array[l][m][j] = kappa_nu;
+                        dtau_em[l][m][j] = kappa_nu * dl[l][m][j];
                         pressure_array[l][m][j] = pressure;
-                    }         
+
+
+                        if(CLOUDS==1)
+                        { 
+                            cloud_param = 1e-3;
+                            aero_lw_kappa_interp_1 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_1[o][c][j], aero_lw_kappa_1[o][c+1][j], aero_lw_kappa_1[o+1][c][j], aero_lw_kappa_1[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
+                            aero_lw_kappa_interp_2 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_2[o][c][j], aero_lw_kappa_2[o][c+1][j], aero_lw_kappa_2[o+1][c][j], aero_lw_kappa_2[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
+                            aero_lw_kappa_interp_3 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_3[o][c][j], aero_lw_kappa_3[o][c+1][j], aero_lw_kappa_3[o+1][c][j], aero_lw_kappa_3[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
+                            aero_lw_kappa_interp_4 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_4[o][c][j], aero_lw_kappa_4[o][c+1][j], aero_lw_kappa_4[o+1][c][j], aero_lw_kappa_4[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
+                            
+                            aero_lw_kappa_interp_1 = aero_lw_kappa_interp_1 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
+                            aero_lw_kappa_interp_2 = aero_lw_kappa_interp_2 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
+                            aero_lw_kappa_interp_3 = aero_lw_kappa_interp_3 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
+                            aero_lw_kappa_interp_4 = aero_lw_kappa_interp_4 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
+
+                            total_cloud_kappa = aero_lw_kappa_interp_1 + aero_lw_kappa_interp_2 + aero_lw_kappa_interp_3 + aero_lw_kappa_interp_4;
+
+                            dtau_em[l][m][j] = (kappa_nu_array[l][m][j] + total_cloud_kappa) * dl[l][m][j];
+
+                            double weight_1 = aero_lw_kappa_interp_1 * dl[l][m][j] / dtau_em[l][m][j];
+                            double weight_2 = aero_lw_kappa_interp_2 * dl[l][m][j] / dtau_em[l][m][j];
+                            double weight_3 = aero_lw_kappa_interp_3 * dl[l][m][j] / dtau_em[l][m][j];
+                            double weight_4 = aero_lw_kappa_interp_4 * dl[l][m][j] / dtau_em[l][m][j];
+
+                            if (dtau_em[l][m][j] == 0)
+                            {
+                                weight_1 = 0;
+                                weight_2 = 0;
+                                weight_3 = 0;
+                                weight_4 = 0;
+                            }
+
+
+                            pi0_tot[l][m][j] =  (weight_1 * PI0_MgSiO3 + \
+                                                 weight_2 * PI0_Fe + \
+                                                 weight_3 * PI0_Al2O3 + \
+                                                 weight_4 * PI0_MnS);
+                            
+                            asym_tot[l][m][j] = (weight_1 * G0_MgSiO3 + \
+                                                 weight_2 * G0_Fe + \
+                                                 weight_3 * G0_Al2O3 + \
+                                                 weight_4 * G0_MnS);
+                        }
+
+                        // if clouds are turned off, need to set scattering params to zero
+                        else
+                        {
+                            pi0_tot[l][m][j] = 0.0;
+                            asym_tot[l][m][j] = 0.0;
+                        }
+
+                        // Reassign the top layers if the temp is 0 or the optical depth is
+                        if(CLOUDS==1)
+                        { 
+                            if (temperature < 100 || dtau_em[l][m][j] < 1e-90)
+                            {
+                                pi0_tot[l][m][j] = 0.0;
+                                asym_tot[l][m][j] = 0.0;
+                                dtau_em[l][m][j] = kappa_nu * dl[l][m][j];
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -759,19 +729,19 @@ int RT_Emit_3D(double PHASE)
             }
         }
         
-
+        
         
         //Calculate the intensity of emergent rays at each latitude and longitude
         
         // C HARADA -- update for 2stream //
         running_sum = 0.0;
-        num_points = 0.0;
         average = 0.0;
         good_intensity = 0.0;
         for(l=0; l<NLAT; l++)
         {
             for(m=0; m<NLON; m++)
             {
+                intensity[l][m] = 0;
                 if(atmos.lon[m]>=450.0-PHASE && atmos.lon[m]<=630.0-PHASE)
                 {                    
                     // Calculate the incident fraction of starlight for 2stream //
@@ -791,53 +761,60 @@ int RT_Emit_3D(double PHASE)
                         }
                     }
 
-                    // SHHHHH
+
                     kmin = kmin + 5;
+
                     
                     if (kmin >= NTAU)
                     {
                         intensity[l][m] = 0;
                     }
-                    
+
                     else
                     {
                         intensity[l][m] = two_stream(NTAU, kmin, pi0_tot[l][m], asym_tot[l][m], temperature_3d[l][m], tau_em[l][m], \
                                                      CLIGHT / atmos.lambda[i], CLIGHT / atmos.lambda[i] - CLIGHT / atmos.lambda[i+1], 
                                                      incident_frac, dtau_em[l][m]);
+
+
+
+
+                        // If the jump in optical depth is more than 10000, skip that cell
+                        //for (j = kmin; j<NTAU; j++)
+                        //{
+                        //    printf("%.5e %.5e %.5e %.5e\n", pi0_tot[l][m][j], asym_tot[l][m][j], temperature_3d[l][m][j], dtau_em[l][m][j]);
+                        //}
+                        //printf("\n\n");
+
+                        //{
+                        //    if (dtau_em[l][m][j] / dtau_em[l][m][j+1] > 5e3 || dtau_em[l][m][j+1] / dtau_em[l][m][j] > 5e3)
+                        //    {
+                        //        intensity[l][m] = 0;
+                        //    }
+                        //}
+
+
+
                     }
                 }
             }
         }
         
-
+        
+        
         /*
         // ~~~ THIS IS THE OLD RT ROUTINE ~~~ //
-        
         for(l=0; l<NLAT; l++)
         {
             for(m=0; m<NLON; m++)
             {
                 if(atmos.lon[m]>=450.0-PHASE && atmos.lon[m]<=630.0-PHASE)
                 {
-                    intensity[l][m] = Planck(atmos.T_3d[l][m][NTAU-1], atmos.lambda[i]) * exp(-tau_em[l][m][NTAU-1]);
                     //intensity[l][m] = Planck(1000, atmos.lambda[i]) * exp(-tau_em[l][m][NTAU-1]);
-
-
-                    int j_min = 0;
-                    for (j=0; j<NTAU; j++)
-                    {
-                        if (temperature_3d[l][m][j] < 100)
-                        {
-                            j_min += 1;
-                        }
-                    }
-                    I_top[l][m] = Planck(temperature_3d[l][m][j_min], atmos.lambda[i]);
-                    //I_top[l][m] = Planck(1000, atmos.lambda[i]);
+                    intensity[l][m] = Planck(atmos.T_3d[l][m][NTAU-1], atmos.lambda[i]) * exp(-tau_em[l][m][NTAU-1]);
                 }
             }
         }
-
-
 
         for(l=0; l<NLAT; l++)
         {
@@ -847,17 +824,20 @@ int RT_Emit_3D(double PHASE)
                 {
                     for(j=0; j<NTAU; j++)
                     {
-                        intensity[l][m] += Planck(temperature_3d[l][m][j], atmos.lambda[i]) * exp(-tau_em[l][m][j]) * dtau_em[l][m][j];
                         //intensity[l][m] += Planck(1000, atmos.lambda[i]) * exp(-tau_em[l][m][j]) * dtau_em[l][m][j];
+                        intensity[l][m] += Planck(temperature_3d[l][m][j], atmos.lambda[i]) * exp(-tau_em[l][m][j]) * dtau_em[l][m][j];
                     }
                 }
             }
         }
+        
         */
+        
+
  
         
         /*Calculate the total flux received by us*/
-        //FILE *fptr = fopen("/home/imalsky/Desktop/test.txt", "w"); 
+        //FILE *fptr = fopen("/home/imalsky/Desktop/new_1000.txt", "w"); 
         flux_pl[i] = 0.0;
         for(l=0; l<NLAT; l++)
         {
@@ -865,12 +845,13 @@ int RT_Emit_3D(double PHASE)
             {
                 if(atmos.lon[m]>=450.0-PHASE && atmos.lon[m]<=630.0-PHASE)
                 {
-                    //fprintf(fptr, "%d, %d, %.8e\n", l, m, intensity[l][m]);   
+                    //fprintf(fptr, "%d %d %.8e %.8e %.8e %.8e %.8e %.8e\n", l, m, flux_pl[i], intensity[l][m], theta[l][m], phi[l][m], dtheta[l][m], dphi[l][m]);
                     flux_pl[i] += intensity[l][m] * SQ(cos(theta[l][m])) * cos(phi[l][m]-PI) * dtheta[l][m] * dphi[l][m];
                 }
             }
         }
         //fclose(fptr); 
+
         
         if(i % 100 == 0)
         {

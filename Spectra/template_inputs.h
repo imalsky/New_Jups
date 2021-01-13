@@ -44,6 +44,7 @@ Defines input values and files for 3-D emission spectra
 
 /* Aerosol properties (calculated by the Mischenko Mie code) */
 
+
 #define PI0_MgSiO3 0.99
 #define G0_MgSiO3 0.14
 #define QE_MgSiO3 0.07
@@ -56,9 +57,11 @@ Defines input values and files for 3-D emission spectra
 #define G0_Al2O3 0.15
 #define QE_Al2O3 0.12
 
-#define PI0_MnS 1.00
+#define PI0_MnS 0.99
 #define G0_MnS 0.35
 #define QE_MnS 0.56
+
+
 
 
 /* Opacities for hi-res spectra */
