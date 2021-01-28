@@ -9,7 +9,7 @@ import numpy as np
 import run_grid
 
 phases = [0.0]
-inclinations = [1.152]
+inclinations = [0.0]
 sytem_obliquity = 0
 
 NTAU = 250
@@ -34,7 +34,7 @@ grid_lat_min = -87.16
 grid_lat_max = 87.16
 grid_lon_min = 0.0
 grid_lon_max = 356.25
-system_obliquity = 1
+system_obliquity = 0
 
 def get_run_lists(phases, inclinations):
     for phase in phases:

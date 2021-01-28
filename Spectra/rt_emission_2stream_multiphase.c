@@ -477,8 +477,7 @@ int RT_Emit_3D(double PHASE)
     }
     printf("solid %f\n", solid);
     
-    //for(i=0; i<NLAMBDA; i++)
-    for(i=500; i<1000; i++)
+    for(i=0; i<NLAMBDA; i++)
     {
         for(l=0; l<NLAT; l++)
         {
@@ -644,16 +643,27 @@ int RT_Emit_3D(double PHASE)
 
                         if(CLOUDS==1)
                         { 
-                            cloud_param = 1e-3;
+                            cloud_param = 0.0;
                             aero_lw_kappa_interp_1 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_1[o][c][j], aero_lw_kappa_1[o][c+1][j], aero_lw_kappa_1[o+1][c][j], aero_lw_kappa_1[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
                             aero_lw_kappa_interp_2 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_2[o][c][j], aero_lw_kappa_2[o][c+1][j], aero_lw_kappa_2[o+1][c][j], aero_lw_kappa_2[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
                             aero_lw_kappa_interp_3 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_3[o][c][j], aero_lw_kappa_3[o][c+1][j], aero_lw_kappa_3[o+1][c][j], aero_lw_kappa_3[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
                             aero_lw_kappa_interp_4 = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], aero_lw_kappa_4[o][c][j], aero_lw_kappa_4[o][c+1][j], aero_lw_kappa_4[o+1][c][j], aero_lw_kappa_4[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
                             
-                            aero_lw_kappa_interp_1 = aero_lw_kappa_interp_1 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
-                            aero_lw_kappa_interp_2 = aero_lw_kappa_interp_2 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
-                            aero_lw_kappa_interp_3 = aero_lw_kappa_interp_3 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
-                            aero_lw_kappa_interp_4 = aero_lw_kappa_interp_4 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
+                            if (dtau_em[l][m][j] == 0)
+                            {
+                                aero_lw_kappa_interp_1 = aero_lw_kappa_interp_1;
+                                aero_lw_kappa_interp_2 = aero_lw_kappa_interp_2;
+                                aero_lw_kappa_interp_3 = aero_lw_kappa_interp_3;
+                                aero_lw_kappa_interp_4 = aero_lw_kappa_interp_4;
+                            }
+                            else
+                            {
+                                aero_lw_kappa_interp_1 = aero_lw_kappa_interp_1 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
+                                aero_lw_kappa_interp_2 = aero_lw_kappa_interp_2 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
+                                aero_lw_kappa_interp_3 = aero_lw_kappa_interp_3 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
+                                aero_lw_kappa_interp_4 = aero_lw_kappa_interp_4 * (dtau_em[l][m][j] / (dtau_em[l][m][j] + cloud_param));
+                            }
+
 
                             total_cloud_kappa = aero_lw_kappa_interp_1 + aero_lw_kappa_interp_2 + aero_lw_kappa_interp_3 + aero_lw_kappa_interp_4;
 
@@ -775,26 +785,6 @@ int RT_Emit_3D(double PHASE)
                         intensity[l][m] = two_stream(NTAU, kmin, pi0_tot[l][m], asym_tot[l][m], temperature_3d[l][m], tau_em[l][m], \
                                                      CLIGHT / atmos.lambda[i], CLIGHT / atmos.lambda[i] - CLIGHT / atmos.lambda[i+1], 
                                                      incident_frac, dtau_em[l][m]);
-
-
-
-
-                        // If the jump in optical depth is more than 10000, skip that cell
-                        //for (j = kmin; j<NTAU; j++)
-                        //{
-                        //    printf("%.5e %.5e %.5e %.5e\n", pi0_tot[l][m][j], asym_tot[l][m][j], temperature_3d[l][m][j], dtau_em[l][m][j]);
-                        //}
-                        //printf("\n\n");
-
-                        //{
-                        //    if (dtau_em[l][m][j] / dtau_em[l][m][j+1] > 5e3 || dtau_em[l][m][j+1] / dtau_em[l][m][j] > 5e3)
-                        //    {
-                        //        intensity[l][m] = 0;
-                        //    }
-                        //}
-
-
-
                     }
                 }
             }
@@ -845,7 +835,6 @@ int RT_Emit_3D(double PHASE)
             {
                 if(atmos.lon[m]>=450.0-PHASE && atmos.lon[m]<=630.0-PHASE)
                 {
-                    //fprintf(fptr, "%d %d %.8e %.8e %.8e %.8e %.8e %.8e\n", l, m, flux_pl[i], intensity[l][m], theta[l][m], phi[l][m], dtheta[l][m], dphi[l][m]);
                     flux_pl[i] += intensity[l][m] * SQ(cos(theta[l][m])) * cos(phi[l][m]-PI) * dtheta[l][m] * dphi[l][m];
                 }
             }

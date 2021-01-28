@@ -570,7 +570,6 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   //{
   //  QUADRATURE_TWO_STREAM[0] = 0.0;
   //}
-  return HEMISPHERIC_SOURCE_FNC[0];
 
-  //return HEMISPHERIC_SOURCE_FNC[0] + QUADRATURE_TWO_STREAM[1];
+  return HEMISPHERIC_SOURCE_FNC[0] + QUADRATURE_TWO_STREAM[1];
 }
