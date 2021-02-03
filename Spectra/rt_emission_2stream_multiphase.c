@@ -344,8 +344,7 @@ int RT_Emit_3D(double PHASE)
                 }
             }
         }
-    }
-    
+    }    
     /*Geometry*/
     
     /*Calculating dl longitude and latitude along line-of-sight*/
@@ -476,7 +475,7 @@ int RT_Emit_3D(double PHASE)
         }
     }
     printf("solid %f\n", solid);
-    
+
     for(i=0; i<NLAMBDA; i++)
     {
         for(l=0; l<NLAT; l++)
@@ -497,14 +496,21 @@ int RT_Emit_3D(double PHASE)
             {
                 if(atmos.lon[m]>=450.0-PHASE && atmos.lon[m]<=630.0-PHASE)
                 {
-                    //printf("\n\n\n");
                     for(j=0; j<NTAU; j++)
                     {
                         Locate(NLAT, atmos.lat, theta_lat_solid[l][m][j], &o);
                         Locate(NLON, atmos.lon, phi_lon_solid[l][m][j]-PHASE, &c);
-                        
+
                         pressure = lint2D(atmos.lon[c], atmos.lon[c+1], atmos.lat[o], atmos.lat[o+1], atmos.P_3d[o][c][j], atmos.P_3d[o][c+1][j], atmos.P_3d[o+1][c][j], atmos.P_3d[o+1][c+1][j], phi_lon_solid[l][m][j]-PHASE, theta_lat_solid[l][m][j]);
                         
+                        //The pressure breaks this if it's too high
+                        if (pressure > 9.99e9)
+                        {
+                            printf("Warning: pressures are too high\n");
+                            pressure = 9.99e9;
+                        }
+
+
                         if(atmos.T_3d[o][c][j] < 100.0 || atmos.T_3d[o][c+1][j] < 100.0)
                         {
                             temperature = 0.0;
@@ -621,6 +627,7 @@ int RT_Emit_3D(double PHASE)
                             {
                                 kappa_nu = 0.0;
                             }
+
                             else
                             {
                                 kappa_nu = lint2D(opac.T[g], opac.T[g+1],
@@ -632,9 +639,6 @@ int RT_Emit_3D(double PHASE)
                                                   temperature, pressure);
                             }
                         }
-
-
-
 
                         kappa_nu_array[l][m][j] = kappa_nu;
                         dtau_em[l][m][j] = kappa_nu * dl[l][m][j];
@@ -693,7 +697,6 @@ int RT_Emit_3D(double PHASE)
                                                  weight_3 * G0_Al2O3 + \
                                                  weight_4 * G0_MnS);
                         }
-
                         // if clouds are turned off, need to set scattering params to zero
                         else
                         {
@@ -714,9 +717,7 @@ int RT_Emit_3D(double PHASE)
                     }
                 }
             }
-        }
-        
-        
+        }   
         
         for(l=0; l<NLAT; l++)
         {

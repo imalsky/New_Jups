@@ -46,8 +46,8 @@ NOTE:
 
 
 
-old_file = f'/home/imalsky/Desktop/UPS-PLANETS/UPS-BIG-G-COM-CLOUDY.txt'
-new_file = f'/home/imalsky/Desktop/UPS-PLANETS/UPS-BIG-G-COM-CLOUDY-250.txt'
+old_file = f'/home/imalsky/Desktop/HAYLEY_PLANET.txt'
+new_file = f'/home/imalsky/Desktop/HAYLEY_PLANET_Regrid.txt'
 
 
 smoothing = False
@@ -55,9 +55,9 @@ smoothing = False
 
 NLAT = 48
 
-NLON = 96
+NLON = 98
 
-NTAU = 50
+NTAU = 60
 
 NPARAMS = 22
 
@@ -202,9 +202,8 @@ def double_lons(data):
 
 	# convert bars to pascals
 
-	for i, row in enumerate(double_data):
-
-		double_data[i][4] *= 1e+5
+	#for i, row in enumerate(double_data):
+	#	double_data[i][4] *= 1e+5
 
 
     # return doubled data grid
@@ -470,7 +469,7 @@ def LogInterp_1d(data, data_new, z_new, param_col, integrate=False):
 
 # load data and reshape data into more convenient dimensions
 
-data = np.loadtxt(old_file, skiprows=5)
+data = np.loadtxt(old_file, skiprows=0)
 
 
 data = data.reshape((NLAT, NLON, NTAU, NPARAMS))

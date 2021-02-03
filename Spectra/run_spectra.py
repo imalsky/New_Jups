@@ -8,26 +8,37 @@ import pandas as pd
 import numpy as np
 import run_grid
 
+
+# Phases in degrees, inclination in radians (sorry)
+# An inclination of 0 corresponds to edge on
 phases = [0.0]
 inclinations = [0.0]
 sytem_obliquity = 0
 
+
+# I recommend leaving these as is
+# The NLAT and NLON can be changed, but these values work well
 NTAU = 250
 NLAT = 48
 NLON = 96
-CLOUDS = 1
+CLOUDS = 0
 
 # 0 is off
 # 1 is everything
 # 2 is Wind only
 # 3 is rotation only
 # Test
-dopplers = [1]
+dopplers = [0]
+
+# These are the planet files that you need to run the code
+# So These should be in New_Jups/Planets
+# They should be pretty big files, and don't include the .txt with the names here
+planet_name = 'HAYLEY_PLANET'
 
 #planet_name = 'UPS-BIG-G-CLEAR-250'
 #planet_name = 'UPS-BIG-G-COM-CLOUDY-250'
 #planet_name = 'UPS-LOW-G-CLEAR-250'
-planet_name = 'UPS-LOW-G-COM-CLOUDY-250'
+#planet_name = 'UPS-LOW-G-COM-CLOUDY-250'
 #planet_name = 'UPS-LOW-G-EXT-CLOUDY-250'
 
 grid_lat_min = -87.16
@@ -153,10 +164,9 @@ phase_strs = []
 
 
 
-
-#run_grid.run_all_grid(planet_name, phases, inclinations, system_obliquity, NTAU, NLAT, NLON, grid_lat_min, grid_lat_max, grid_lon_min, grid_lon_max)
-
-#add_columns(phases, inclinations)
+# If you already have the Final planet file creates you can commend out run_grid and add_columns
+run_grid.run_all_grid(planet_name, phases, inclinations, system_obliquity, NTAU, NLAT, NLON, grid_lat_min, grid_lat_max, grid_lon_min, grid_lon_max)
+add_columns(phases, inclinations)
 
 input_paths, inclination_strs, phase_strs = get_run_lists(phases, inclinations)
 
