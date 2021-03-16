@@ -21,7 +21,7 @@ def run_all_grid(planet_name, phases, inclinations, system_obliquity, NTAU, NLAT
                              delimiter=r"\s+",
                              names=('lat', 'lon', 'level',
                                     'alt','pres','temp',
-                                    'temp_std',
+                                    #'temp_std',
                                     'u', 'v', 'w',
                                     'aero_sw_tau_1', 'sw_asym_1', 'sw_pi0_1',
                                     'aero_sw_tau_2', 'sw_asym_2', 'sw_pi0_2',
@@ -54,15 +54,13 @@ def run_all_grid(planet_name, phases, inclinations, system_obliquity, NTAU, NLAT
 
             df['w'] = 0.0
 
-            df = df.drop(['temp_std'], axis=1)
+            # df = df.drop(['temp_std'], axis=1)
 
             df['pres'] = 1e5 * df['pres']
 
             # Get rid of any place where the longitude is equal to 360
             # Not needed by Eliza Code
-            #df = df[(df['lon'] != 360)].reset_index()
             df = df.reset_index()
-
 
             def get_incident_flux(df, system_obliquity):
                 """Add a new column corresponding to the fraction of intensity"""
@@ -201,7 +199,11 @@ def run_all_grid(planet_name, phases, inclinations, system_obliquity, NTAU, NLAT
                     big_df = pd.merge(big_df, param_dataframes[i+1], how='left')
                     
                 big_df['level'] = level
-                big_df['alt'] = min(sub_df.alt)
+
+                if (len(sub_df.alt)) > 0:
+                    big_df['alt'] = min(sub_df.alt)
+                else:
+                    big_df['alt'] = full_df.alt[0]
 
                 big_df['pres'][full_temp['temp'] < 0] = 0
                 big_df['temp'][full_temp['temp'] < 0] = 0

@@ -121,13 +121,11 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   double HEMISPHERIC_TWO_STREAM[NLAYER - kmin];
   double HEMISPHERIC_SOURCE_FNC[NLAYER - kmin];
 
+  double TOTAL_FLUX;
+
   // Final values for short wave radiation
   double QUADRATURE_TWO_STREAM[NLAYER - kmin];
   double QUADRATURE_SOURCE_FNC[NLAYER - kmin];
-
-  // Top Layer values long wave
-  double HEMISPHERIC_TWO_STREAM_TOP;
-  double HEMISPHERIC_SOURCE_FNC_TOP;
 
   // Top layer values short wave
   double QUADRATURE_TWO_STREAM_TOP;
@@ -156,6 +154,7 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   {
     W0[J] = w0_array[J+kmin];
     G0[J] = g0_array[J+kmin];
+
 
     TEMPS[J] = temperature_array[J+kmin];
     DTAUS[J] = dtau_array[J+kmin];
@@ -309,7 +308,7 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   // DIFFUSE RADIATION IS INCIDENT AT THE TOP.
 
   E[0] = -CM[0];
-  E[2*NEW_NLAYER-1]  = SFCS_HEMISPHERIC + RSFX * CMB[2*NEW_NLAYER-1] - CPB[2*NEW_NLAYER-1];
+  E[2*NEW_NLAYER-1]  = SFCS_HEMISPHERIC + RSFX * CMB[NEW_NLAYER-1] - CPB[NEW_NLAYER-1];
   DS[2*NEW_NLAYER-1] = E[2*NEW_NLAYER-1] / B[2*NEW_NLAYER-1];
   AS[2*NEW_NLAYER-1] = A[2*NEW_NLAYER-1] / B[2*NEW_NLAYER-1];
 
@@ -361,8 +360,8 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
 
     source_temp[J] = (1.0 / (y1[J] + y2[J])) - mu_1;
 
-    ALPHA_1[J]     = B0[J] + (B1[J] * source_temp[J]);
-    ALPHA_2[J]     = B1[J];
+    ALPHA_1[J]     = 2 * PI * (B0[J] + (B1[J] * source_temp[J]));
+    ALPHA_2[J]     = 2 * PI * (B1[J]);
 
     SIGMA_1[J] = 2.0 * PI * (B0[J] - (B1[J] * source_temp[J]));
     SIGMA_2[J] = 2.0 * PI * B1[J];
@@ -401,8 +400,9 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
                       ALPHA_1[J] * (1.0 - exp(-TAULS[J+1])) + \
                       ALPHA_2[J] * (1.0 - ((TAULS[J+1] + 1.0) * (exp(-TAULS[J+1]))));
 
-    HEMISPHERIC_SOURCE_FNC[J] = fabs(INTENSITY_UP[J]);
+    HEMISPHERIC_SOURCE_FNC[J] = INTENSITY_UP[J];
   }
+
 
 
 
@@ -566,10 +566,12 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     QUADRATURE_TWO_STREAM[J] = TMI[J];
   }
 
-  //if (HEMISPHERIC_SOURCE_FNC[0] * 20 < fabs(QUADRATURE_TWO_STREAM[0] / (4.0 * PI)))
-  //{
-  //  QUADRATURE_TWO_STREAM[0] = 0.0;
-  //}
+  if (HEMISPHERIC_SOURCE_FNC[0] < 0)
+  {
+      HEMISPHERIC_SOURCE_FNC[0] = 0;
+  }
 
-  return HEMISPHERIC_SOURCE_FNC[0] + QUADRATURE_TWO_STREAM[1];
+  TOTAL_FLUX = (HEMISPHERIC_SOURCE_FNC[0] / (2 * PI)) + (QUADRATURE_TWO_STREAM[1] / (4.0 * PI));
+
+  return TOTAL_FLUX;
 }

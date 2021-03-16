@@ -14,7 +14,7 @@ Plots 2d temp and cloud map at some altitude (3 cases)
 
 ### ----- INPUT/OUTPUT CONTROL ----- ###
 
-cases = ['LOW', 'BIG']
+cases = ['LOW']
 
 output_file = 'malsky-testing'
 
@@ -63,7 +63,7 @@ plt.subplots_adjust(wspace=0.05, hspace=0.05)
 
 
 
-P_phots = [1, 1]     # pressure level to probe [mbar; IR photosphere: 26 mbar]
+  # pressure level to probe [mbar; IR photosphere: 26 mbar]
 
 # file info
 nlat = 48
@@ -72,23 +72,25 @@ nlevel = 250
 nparams = 22
 
 
-temp_low = 500
-temp_high = 2500
+temp_low = 750
+temp_high = 2000
 
 clouds_low = 0.0
-clouds_high = 0.075     # thick
-#clouds_high = 0.068     # thin
+clouds_high = 0.25
 
-clouds_list = []
+
+#clouds_list = []
+#temps_list  = [2000, 2000, 2000]
+P_phots = [79.83, 79.83, 153.05]   
 
 
 for ind, case in enumerate(cases):
     P_phot = P_phots[ind]
-
+    #max_tau = clouds_list[ind]
 
     ### ----- LOAD DATA FROM FILE ----- ###
 
-    cloudreport = f'/home/imalsky/Desktop/New_Jups/Spectra/DATA/Final_UPS-{case}-G-CLEAR-250_phase_0.0_inc_0.0.txt'
+    cloudreport = f'/home/imalsky/Desktop/New_Jups/Spectra/DATA/Final_UPS-{case}-G-CLOUDY-250_phase_0.0_inc_0.0.txt'
 
     print()
     print('Reading data...')
@@ -204,7 +206,7 @@ for ind, case in enumerate(cases):
 
     print ('max', np.amax(clouds_new))
     #cloud_map = axes[1][ind].contourf(XX, YY, np.log10(clouds_new + 0.00001), cmap=my_colors, levels=np.arange(-2, 3.5, 0.01))
-    cloud_map = axes[1][ind].contourf(XX, YY, clouds_new, cmap=my_colors, levels=np.linspace(0, 7.5, 100))
+    cloud_map = axes[1][ind].contourf(XX, YY, clouds_new, cmap=my_colors, levels=np.linspace(clouds_low, clouds_high, 100))
     #axes[1][ind].set_facecolor(my_colors(0))
 
 

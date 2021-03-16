@@ -46,8 +46,8 @@ NOTE:
 
 
 
-old_file = f'/home/imalsky/Desktop/HAYLEY_PLANET.txt'
-new_file = f'/home/imalsky/Desktop/HAYLEY_PLANET_Regrid.txt'
+old_file = f'/home/imalsky/Desktop/UPS-PLANETS/OG-GCM-OUTPUT/cloudreport_UpsAndb_lowg_classic.txt'
+new_file = f'/home/imalsky/Desktop/cloudreport_UpsAndb_lowg_classic-250.txt'
 
 
 smoothing = False
@@ -55,11 +55,11 @@ smoothing = False
 
 NLAT = 48
 
-NLON = 98
+NLON = 96
 
-NTAU = 60
+NTAU = 50
 
-NPARAMS = 22
+NPARAMS = 21
 
 NLON_new = 96	# for output file
 
@@ -223,7 +223,17 @@ def LInterp_1d(data, data_new, z_new, param_col):
 
 	# data must be an array of dimensions [NLAT x NLON x NTAU x NPARAMS]
 	# z_grid is array of length NTAU containing new altitude grid points
+	"""
+	if param_col == 5:
+		print ('here')
+		print (data[0][0][:,param_col])
 
+		param_interp = interpolate.interp1d(data[0][0][:,3], data[0][0][:,param_col], kind="linear", bounds_error=False, fill_value=0)
+
+		param_new = param_interp(z_new)
+
+		print (param_new)
+	"""
 
 
 	for i in range(NLAT):
@@ -258,10 +268,10 @@ def LInterp_1d(data, data_new, z_new, param_col):
 			# change parameter values in data array to the new interpolated values
 
 			for k in range(NTAU_new):
-
-				data_new[i][j][k][param_col] = param_new[k]
-
-
+				if (param_col == 9 or param_col == 12 or param_col == 15 or param_col == 18):
+					data_new[i][j][k][param_col] = param_new[k] / (NTAU_new / NTAU)# optical depth
+				else:
+					data_new[i][j][k][param_col] = param_new[k]
 
 	return data_new
 
@@ -469,7 +479,7 @@ def LogInterp_1d(data, data_new, z_new, param_col, integrate=False):
 
 # load data and reshape data into more convenient dimensions
 
-data = np.loadtxt(old_file, skiprows=0)
+data = np.loadtxt(old_file, skiprows=5)
 
 
 data = data.reshape((NLAT, NLON, NTAU, NPARAMS))
@@ -523,7 +533,7 @@ data_new = LInterp_1d(data, data_new, z_grid, 8)
 
 # interpolate optical depths onto new grid (logarithmic)
 
-data_new = LInterp_1d(data, data_new, z_grid, 9)
+data_new = LInterp_1d(data, data_new, z_grid, 9) 
 data_new = LInterp_1d(data, data_new, z_grid, 10)
 data_new = LInterp_1d(data, data_new, z_grid, 11)
 data_new = LInterp_1d(data, data_new, z_grid, 12)
@@ -535,9 +545,15 @@ data_new = LInterp_1d(data, data_new, z_grid, 17)
 data_new = LInterp_1d(data, data_new, z_grid, 18)
 data_new = LInterp_1d(data, data_new, z_grid, 19)
 data_new = LInterp_1d(data, data_new, z_grid, 20)
-data_new = LInterp_1d(data, data_new, z_grid, 21)
 
 
+
+
+print (data[0][0][:,5])
+
+print  ()
+
+print (data_new[0][0][:,5])
 
 # lastly, set all altitude grids equal (to new grid) and add lat, lon, level
 
@@ -578,7 +594,7 @@ plt.show()
 # double all data, then save to new output file
 
 np.savetxt(new_file, data_new.reshape(NLAT * NLON * NTAU_new, NPARAMS),
-           fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E\t')
+           fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E\t')
 
 
 

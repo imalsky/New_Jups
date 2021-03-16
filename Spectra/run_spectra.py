@@ -12,7 +12,7 @@ import run_grid
 # Phases in degrees, inclination in radians (sorry)
 # An inclination of 0 corresponds to edge on
 phases = [0.0]
-inclinations = [0.0]
+inclinations = [1.5708]
 sytem_obliquity = 0
 
 
@@ -21,19 +21,19 @@ sytem_obliquity = 0
 NTAU = 250
 NLAT = 48
 NLON = 96
-CLOUDS = 0
+CLOUDS = 1
 
 # 0 is off
 # 1 is everything
 # 2 is Wind only
 # 3 is rotation only
 # Test
-dopplers = [0]
+dopplers = [1]
 
 # These are the planet files that you need to run the code
 # So These should be in New_Jups/Planets
 # They should be pretty big files, and don't include the .txt with the names here
-planet_name = 'HAYLEY_PLANET'
+planet_name = 'UPS-LOW-G-CLOUDY-250'
 
 #planet_name = 'UPS-BIG-G-CLEAR-250'
 #planet_name = 'UPS-BIG-G-COM-CLOUDY-250'
@@ -45,7 +45,6 @@ grid_lat_min = -87.16
 grid_lat_max = 87.16
 grid_lon_min = 0.0
 grid_lon_max = 356.25
-system_obliquity = 0
 
 def get_run_lists(phases, inclinations):
     for phase in phases:
@@ -165,8 +164,8 @@ phase_strs = []
 
 
 # If you already have the Final planet file creates you can commend out run_grid and add_columns
-run_grid.run_all_grid(planet_name, phases, inclinations, system_obliquity, NTAU, NLAT, NLON, grid_lat_min, grid_lat_max, grid_lon_min, grid_lon_max)
-add_columns(phases, inclinations)
+#run_grid.run_all_grid(planet_name, phases, inclinations, system_obliquity, NTAU, NLAT, NLON, grid_lat_min, grid_lat_max, grid_lon_min, grid_lon_max)
+#add_columns(phases, inclinations)
 
 input_paths, inclination_strs, phase_strs = get_run_lists(phases, inclinations)
 
