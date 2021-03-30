@@ -148,7 +148,6 @@ for ind, case in enumerate(cases):
             # integrate aerosol optical depth above pressure level
             k = 0
 
-            # Something really funky is going on here
             while k <= int(pressure_ind[i][j]):
 
                 # conversion to 2.3 microns

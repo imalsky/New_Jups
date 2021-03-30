@@ -748,19 +748,17 @@ int RT_Emit_3D(double PHASE)
         running_sum = 0.0;
         average = 0.0;
         good_intensity = 0.0;
+
+        //FILE *fptr = fopen("/home/imalsky/Desktop/test.txt", "w");
+
         for(l=0; l<NLAT; l++)
         {
             for(m=0; m<NLON; m++)
             {
                 intensity[l][m] = 0;
+
                 if(atmos.lon[m]>=450.0-PHASE && atmos.lon[m]<=630.0-PHASE)
                 {                    
-                    // Calculate the incident fraction of starlight for 2stream //
-                    incident_frac = cos(lon_rad[m]) * cos(lat_rad[l]);
-                    if (incident_frac < 0)
-                    {
-                        incident_frac = 0.0;
-                    }
                     
                     // Find min vert level for 2stream //
                     kmin = 0;
@@ -785,12 +783,15 @@ int RT_Emit_3D(double PHASE)
                     {
                         intensity[l][m] = two_stream(NTAU, kmin, pi0_tot[l][m], asym_tot[l][m], temperature_3d[l][m], tau_em[l][m], \
                                                      CLIGHT / atmos.lambda[i], CLIGHT / atmos.lambda[i] - CLIGHT / atmos.lambda[i+1], 
-                                                     incident_frac, dtau_em[l][m]);
+                                                     fabs(atmos.incident_frac[l][m][NTAU-10]), dtau_em[l][m]);
+                        //fprintf(fptr, "%.8e %.8e %.8e\n", atmos.lat[l], atmos.lon[m], fabs(atmos.incident_frac[l][m][NTAU - 10]));
+
+
                     }
                 }
             }
         }
-        
+        //fclose(fptr);
         
         
         /*

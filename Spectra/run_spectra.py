@@ -11,9 +11,9 @@ import run_grid
 
 # Phases in degrees, inclination in radians (sorry)
 # An inclination of 0 corresponds to edge on
-phases = [0.0]
-inclinations = [1.5708]
-sytem_obliquity = 0
+phases = [180.0]
+inclinations = [0.0]
+system_obliquity = 0
 
 
 # I recommend leaving these as is
@@ -28,13 +28,13 @@ CLOUDS = 1
 # 2 is Wind only
 # 3 is rotation only
 # Test
-dopplers = [1]
+dopplers = [0]
 
 # These are the planet files that you need to run the code
 # So These should be in New_Jups/Planets
 # They should be pretty big files, and don't include the .txt with the names here
-planet_name = 'UPS-LOW-G-CLOUDY-250'
 
+planet_name = 'UPS-LOW-G-CLOUDY-250'
 #planet_name = 'UPS-BIG-G-CLEAR-250'
 #planet_name = 'UPS-BIG-G-COM-CLOUDY-250'
 #planet_name = 'UPS-LOW-G-CLEAR-250'
