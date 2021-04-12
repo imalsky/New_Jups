@@ -46,8 +46,8 @@ NOTE:
 
 
 
-old_file = f'/home/imalsky/Desktop/UPS-PLANETS/OG-GCM-OUTPUT/cloudreport_UpsAndb_lowg_classic.txt'
-new_file = f'/home/imalsky/Desktop/cloudreport_UpsAndb_lowg_classic-250.txt'
+old_file = f'/home/imalsky/Documents/Hot-Jupiter-Work/UPS-PLANETS/OG-GCM-OUTPUT/UPS-BIG-G-CLEAR.txt'
+new_file = f'/home/imalsky/Desktop/UPS-LOW-G-COM-CLEAR-1000-test.txt'
 
 
 smoothing = False
@@ -59,11 +59,11 @@ NLON = 96
 
 NTAU = 50
 
-NPARAMS = 21
+NPARAMS = 12
 
 NLON_new = 96	# for output file
 
-NTAU_new = 250  # for output file
+NTAU_new = 1000  # for output file
 
 
 
@@ -536,23 +536,20 @@ data_new = LInterp_1d(data, data_new, z_grid, 8)
 data_new = LInterp_1d(data, data_new, z_grid, 9) 
 data_new = LInterp_1d(data, data_new, z_grid, 10)
 data_new = LInterp_1d(data, data_new, z_grid, 11)
-data_new = LInterp_1d(data, data_new, z_grid, 12)
-data_new = LInterp_1d(data, data_new, z_grid, 13)
-data_new = LInterp_1d(data, data_new, z_grid, 14)
-data_new = LInterp_1d(data, data_new, z_grid, 15)
-data_new = LInterp_1d(data, data_new, z_grid, 16)
-data_new = LInterp_1d(data, data_new, z_grid, 17)
-data_new = LInterp_1d(data, data_new, z_grid, 18)
-data_new = LInterp_1d(data, data_new, z_grid, 19)
-data_new = LInterp_1d(data, data_new, z_grid, 20)
-
+#data_new = LInterp_1d(data, data_new, z_grid, 12)
+#data_new = LInterp_1d(data, data_new, z_grid, 13)
+#data_new = LInterp_1d(data, data_new, z_grid, 14)
+#data_new = LInterp_1d(data, data_new, z_grid, 15)
+#data_new = LInterp_1d(data, data_new, z_grid, 16)
+#data_new = LInterp_1d(data, data_new, z_grid, 17)
+#data_new = LInterp_1d(data, data_new, z_grid, 18)
+#data_new = LInterp_1d(data, data_new, z_grid, 19)
+#data_new = LInterp_1d(data, data_new, z_grid, 20)
 
 
 
 print (data[0][0][:,5])
-
 print  ()
-
 print (data_new[0][0][:,5])
 
 # lastly, set all altitude grids equal (to new grid) and add lat, lon, level
@@ -562,13 +559,9 @@ for i in range(NLAT):
 	for j in range(NLON):
 
 		for k in range(NTAU_new):
-
 			data_new[i][j][k][3] = z_grid[k]
-
 			data_new[i][j][k][2] = k + 1
-
 			data_new[i][j][k][1] = data[i][j][0][1]
-
 			data_new[i][j][k][0] = data[i][j][0][0]
 
 
@@ -593,11 +586,13 @@ plt.show()
 
 # double all data, then save to new output file
 
+#np.savetxt(new_file, data_new.reshape(NLAT * NLON * NTAU_new, NPARAMS),
+#           fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E\t')
+
+
+
 np.savetxt(new_file, data_new.reshape(NLAT * NLON * NTAU_new, NPARAMS),
-           fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E\t')
-
-
-
+           fmt='%12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E  %12.4E %12.4E\t')
 
 
 

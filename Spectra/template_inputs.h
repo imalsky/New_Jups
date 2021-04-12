@@ -24,8 +24,18 @@ Defines input values and files for 3-D emission spectra
 #define NLON  <<NLON>>                           /* Number of longitude points in 3-D grid */
 
 #define NTEMP 30                           /* Number of temperature points in grid   */
-#define NPRESSURE 17                       /* Number of pressure points in grid   [13/17]   */
 #define NLAMBDA 2598                       /* Number of wavelength points in grid [4616/2598]   */
+
+// This is the Npressure for low res
+//#define NPRESSURE 13                       /* Number of pressure points in grid   [13/17]   */
+
+//High Res
+#define NPRESSURE 17                       /* Number of pressure points in grid   [13/17]   */
+
+
+#define W0_VAL <<W0_VAL>>
+#define G0_VAL <<G0_VAL>>
+
 
 /* Planet parameters */
 #define INPUT_INCLINATION <<inclination>>  /* Planet inclination in radians            */
@@ -75,33 +85,16 @@ Defines input values and files for 3-D emission spectra
 #define O2_FILE    "DATA/opacO2_hires.dat"
 #define O3_FILE    "DATA/opacO3_hires.dat"
 
-
-/* Opacities for low-res spectra */
 /*
-#define CHEM_FILE   "DATA/eos_solar_doppler_2016_cond.dat"
-#define CH4_FILE    "DATA/opacCH4.dat"
-#define CO2_FILE    "DATA/opacCO2.dat"
-#define CO_FILE     "DATA/opacCO.dat"
-#define H2O_FILE    "DATA/opacH2O.dat"
-#define NH3_FILE    "DATA/opacNH3.dat"
-#define O2_FILE     "DATA/opacO2.dat"
-#define O3_FILE     "DATA/opacO3.dat"
+#define CHEM_FILE   "DATA/low-res/eos_solar_doppler_2016_cond.dat"
+#define CH4_FILE    "DATA/low-res/opacCH4.dat"
+#define CO2_FILE    "DATA/low-res/opacCO2.dat"
+#define CO_FILE     "DATA/low-res/opacCO.dat"
+#define H2O_FILE    "DATA/low-res/opacH2O.dat"
+#define NH3_FILE    "DATA/low-res/opacNH3.dat"
+#define O2_FILE     "DATA/low-res/opacO2.dat"
+#define O3_FILE     "DATA/low-res/opacO3.dat"
 */
 #endif /* !__INPUT_H__ */
 
 /* ------- end ---------------------------- input.h  ----------------- */
-
-
-
-
-
-/*
-#define CHEM_FILE   "DATA/High_Res_Opac/eos_solar_doppler_2016_cond.dat"
-#define CH4_FILE    "DATA/High_Res_Opac/opacCH4_hires_Brogi.dat"
-#define CO2_FILE    "DATA/High_Res_Opac/opacCO2_hires_Brogi.dat"
-#define CO_FILE     "DATA/High_Res_Opac/opacCO_hires_Hayley.dat"
-#define H2O_FILE    "DATA/High_Res_Opac/opacH2O_hires_Brogi_HITEMP.dat"
-#define NH3_FILE    "DATA/High_Res_Opac/opacNH3_hires_Brogi.dat"
-#define O2_FILE     "DATA/High_Res_Opac/opacO2_hires_Brogi.dat"
-#define O3_FILE     "DATA/High_Res_Opac/opacO3_hires_Brogi.dat"
-*/

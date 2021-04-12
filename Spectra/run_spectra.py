@@ -11,17 +11,17 @@ import run_grid
 
 # Phases in degrees, inclination in radians (sorry)
 # An inclination of 0 corresponds to edge on
-phases = [180.0]
+phases = [0.0]
 inclinations = [0.0]
 system_obliquity = 0
 
 
 # I recommend leaving these as is
 # The NLAT and NLON can be changed, but these values work well
-NTAU = 250
+NTAU = 1000
 NLAT = 48
 NLON = 96
-CLOUDS = 1
+CLOUDS = 0
 
 # 0 is off
 # 1 is everything
@@ -34,7 +34,11 @@ dopplers = [0]
 # So These should be in New_Jups/Planets
 # They should be pretty big files, and don't include the .txt with the names here
 
-planet_name = 'UPS-LOW-G-CLOUDY-250'
+planet_name =  'TEST-1000'
+#planet_name = 'UPS-LOW-G-CLOUDY-250'
+#planet_name = 'UPS-LOW-G-CLOUDY-1000'
+
+
 #planet_name = 'UPS-BIG-G-CLEAR-250'
 #planet_name = 'UPS-BIG-G-COM-CLOUDY-250'
 #planet_name = 'UPS-LOW-G-CLEAR-250'
@@ -133,7 +137,7 @@ def run_exo(input_paths, inclination_strs, phase_strs, doppler_val):
             filedata = file.read()
 
         # Replace the input and output paths
-        filedata = filedata.replace("<<output_file>>", "\"" + output_temp + "\"")
+        filedata = filedata.replace("<<output_file>>", "\"" + output_temp + str(W0_VAL) + str(G0_VAL) +"\"")
         filedata = filedata.replace("<<input_file>>", "\"" + input_temp + "\"")
         filedata = filedata.replace("<<doppler>>", str(doppler_val))
         filedata = filedata.replace("<<inclination>>", inclination_strs[i])
@@ -143,6 +147,10 @@ def run_exo(input_paths, inclination_strs, phase_strs, doppler_val):
         filedata = filedata.replace("<<NTAU>>", str(NTAU))
         filedata = filedata.replace("<<NLAT>>", str(NLAT))
         filedata = filedata.replace("<<NLON>>", str(NLON * 2 + 1))
+
+
+        filedata = filedata.replace("<<W0_VAL>>", str(W0_VAL))
+        filedata = filedata.replace("<<G0_VAL>>", str(G0_VAL))
 
 
         # Write the file out again
@@ -169,7 +177,16 @@ phase_strs = []
 
 input_paths, inclination_strs, phase_strs = get_run_lists(phases, inclinations)
 
+print ()
+print ()
 print (input_paths, inclination_strs, phase_strs)
 
-for doppler_val in dopplers:
-    run_exo(input_paths, inclination_strs, phase_strs, doppler_val)
+# If you want to manually set these values you can leave them here
+# Normally they will not affect it, unless you manually set them in two_stream.h
+W0_VALS = [0.0]
+G0_VALS = [0.0]
+
+for G0_VAL in G0_VALS:
+    for W0_VAL in W0_VALS:
+        for doppler_val in dopplers:
+            run_exo(input_paths, inclination_strs, phase_strs, doppler_val)

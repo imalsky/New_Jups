@@ -154,11 +154,12 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   {
     W0[J] = w0_array[J+kmin];
     G0[J] = g0_array[J+kmin];
-
-
     TEMPS[J] = temperature_array[J+kmin];
-    DTAUS[J] = dtau_array[J+kmin];
 
+    //W0[J] = W0_VAL;
+    //G0[J] = G0_VAL;
+
+    DTAUS[J] = dtau_array[J+kmin];
     TAULS[J] = dtau_array[J+kmin];
     TAUCS[J] = tau_array[J+kmin];
 
@@ -292,10 +293,7 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   J = 0;
   for(L=1; L<2*NEW_NLAYER-1; L+=2)
   {
-    // HERE ARE THE EVEN MATRIX ELEMENTS
-    E[L]   = (CP[J+1] - CPB[J]) * e2[J+1] - (CM[J+1] - CMB[J]) * e4[J+1];
-
-    // HERE ARE THE ODD MATRIX ELEMENTS EXCEPT FOR THE TOP.
+    E[L]   = (CP[J+1] - CPB[J]) * e2[J+1] + (CMB[J] - CM[J+1]) * e4[J+1];
     E[L+1] = e3[J] * (CP[J+1] - CPB[J]) + e1[J] * (CMB[J] - CM[J+1]);
     J = J + 1;
   }
@@ -441,7 +439,6 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     e2[J]   =  1.0 - GAMMA[J] * temp_e_val[J];  //e2                      
     e3[J]   =  GAMMA[J] + temp_e_val[J];        //e3                        
     e4[J]   =  GAMMA[J] - temp_e_val[J];        //e4
-
   }
 
 
@@ -512,13 +509,9 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   J = 0;
   for(L=1; L<2*NEW_NLAYER-1; L+=2)
   {
-    // HERE ARE THE EVEN MATRIX ELEMENTS
-    E[L]   = (CP[J+1] - CPB[J]) * e2[J+1] - (CM[J+1] - CMB[J]) * e4[J+1];
-
-    // HERE ARE THE ODD MATRIX ELEMENTS EXCEPT FOR THE TOP.
+    E[L]   = (CP[J+1] - CPB[J]) * e2[J+1] + (CMB[J] - CM[J+1]) * e4[J+1];
     E[L+1] = e3[J] * (CP[J+1] - CPB[J]) + e1[J] * (CMB[J] - CM[J+1]);
     J = J + 1;
-
   }
 
   // HERE ARE THE TOP AND BOTTOM BOUNDARY CONDITIONS AS WELL AS THE
@@ -558,18 +551,9 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
     TMI[J] = (1.0 / mu_1) * (Y[2*J]*(e1[J] + e3[J]) + \
              (Y[2*J+1] * (e2[J] + e4[J])) + CPB[J] + CMB[J]);
 
-    QUADRATURE_TWO_STREAM[J] = fabs(TMI[J]);
+    QUADRATURE_TWO_STREAM[J] = TMI[J];
   }
 
-
-
-
-  if (HEMISPHERIC_SOURCE_FNC[0] < 0)
-  {
-      HEMISPHERIC_SOURCE_FNC[0] = 0;
-  }
-
-
-  TOTAL_FLUX = (HEMISPHERIC_SOURCE_FNC[0] / (2 * PI)) + (QUADRATURE_TWO_STREAM[1] / (4.0 * PI));
+  TOTAL_FLUX = (HEMISPHERIC_SOURCE_FNC[0] / (2 * PI)) + (fabs(QUADRATURE_TWO_STREAM[0]) / (4.0 * PI));
   return TOTAL_FLUX;
 }

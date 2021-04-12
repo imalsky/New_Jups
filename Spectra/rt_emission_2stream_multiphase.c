@@ -637,6 +637,14 @@ int RT_Emit_3D(double PHASE)
                                                   opac.kappa[i][h+1][g],
                                                   opac.kappa[i][h+1][g+1],
                                                   temperature, pressure);
+
+                                //kappa_nu = lint2D(opac.T[g], opac.T[g+1],
+                                //                  opac.P[h], opac.P[h+1],
+                                //                  opac.kappa[100][h][g],
+                                //                  opac.kappa[100][h][g+1],
+                                //                  opac.kappa[100][h+1][g],
+                                //                  opac.kappa[100][h+1][g+1],
+                                //                  temperature, pressure);
                             }
                         }
 
@@ -756,7 +764,6 @@ int RT_Emit_3D(double PHASE)
             for(m=0; m<NLON; m++)
             {
                 intensity[l][m] = 0;
-
                 if(atmos.lon[m]>=450.0-PHASE && atmos.lon[m]<=630.0-PHASE)
                 {                    
                     
@@ -779,14 +786,16 @@ int RT_Emit_3D(double PHASE)
                         intensity[l][m] = 0;
                     }
 
+                    if (atmos.incident_frac[l][m][NTAU-10] < 0)
+                    {
+                        atmos.incident_frac[l][m][NTAU-10] = 0;
+                    }
+
                     else
                     {
                         intensity[l][m] = two_stream(NTAU, kmin, pi0_tot[l][m], asym_tot[l][m], temperature_3d[l][m], tau_em[l][m], \
                                                      CLIGHT / atmos.lambda[i], CLIGHT / atmos.lambda[i] - CLIGHT / atmos.lambda[i+1], 
-                                                     fabs(atmos.incident_frac[l][m][NTAU-10]), dtau_em[l][m]);
-                        //fprintf(fptr, "%.8e %.8e %.8e\n", atmos.lat[l], atmos.lon[m], fabs(atmos.incident_frac[l][m][NTAU - 10]));
-
-
+                                                     atmos.incident_frac[l][m][NTAU-10], dtau_em[l][m]);
                     }
                 }
             }
@@ -823,8 +832,8 @@ int RT_Emit_3D(double PHASE)
             }
         }
         
-        */
         
+        */
 
  
         

@@ -176,15 +176,12 @@ void ReadTP_3D()
     }
   }
     
-    
     file = fopen(T_P_3D_FILE, "r");
     if(file == NULL){
         printf("\nreadt_p.c:\nError opening file: No such file or directory\n\n");
         exit(1);
     }
-    
-    
-    
+        
     for (i=0; i<NLAT; i++){
         for(j=0; j<NLON; j++){
             for(k=0; k<NTAU; k++){
