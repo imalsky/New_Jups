@@ -34,7 +34,8 @@ dopplers = [0]
 # So These should be in New_Jups/Planets
 # They should be pretty big files, and don't include the .txt with the names here
 
-planet_name =  'TEST-1000'
+#planet_name =  'TEST-1000'
+planet_name =  'TEST2-1000'
 #planet_name = 'UPS-LOW-G-CLOUDY-250'
 #planet_name = 'UPS-LOW-G-CLOUDY-1000'
 

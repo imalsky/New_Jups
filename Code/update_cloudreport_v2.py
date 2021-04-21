@@ -266,10 +266,9 @@ def LInterp_1d(data, data_new, z_new, param_col):
 
 
 			# change parameter values in data array to the new interpolated values
-
 			for k in range(NTAU_new):
 				if (param_col == 9 or param_col == 12 or param_col == 15 or param_col == 18):
-					data_new[i][j][k][param_col] = param_new[k] / (NTAU_new / NTAU)# optical depth
+					data_new[i][j][k][param_col] = param_new[k] #/ (NTAU_new / NTAU)# optical depth
 				else:
 					data_new[i][j][k][param_col] = param_new[k]
 
