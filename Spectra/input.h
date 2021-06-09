@@ -10,8 +10,8 @@ Defines input values and files for 3-D emission spectra
 /* I/O SETTINGS. */
 
 /* File names */
-#define OUTPUT_PREFIX "OUT/Spec_0_TEST2-1000_phase_0.0_inc_0.00.00.0"      /* output name */
-#define T_P_3D_FILE "DATA/Final_TEST2-1000_phase_0.0_inc_0.0.txt"         /* input file */
+#define OUTPUT_PREFIX "OUT/Spec_0_UPS-BIG-G-CLEAR-250_phase_0.0_inc_0.00.00.0"      /* output name */
+#define T_P_3D_FILE "DATA/Final_UPS-BIG-G-CLEAR-250_phase_0.0_inc_0.0.txt"         /* input file */
 
 /* Output settings */
 #define N_PHASE 1                          /* Number of phases [96 max; lon grid in increments of 3.75] */
@@ -19,7 +19,7 @@ Defines input values and files for 3-D emission spectra
 #define CLOUDS 0                           /* 0:Off; 1:On */
 
 /* Grid settings */
-#define NTAU 1000                            /* Number of altitude points in grid      */
+#define NTAU 250                            /* Number of altitude points in grid      */
 #define NLAT  48                           /* Number of latitude points in 3-D  grid */
 #define NLON  193                           /* Number of longitude points in 3-D grid */
 

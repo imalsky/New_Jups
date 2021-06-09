@@ -47,7 +47,7 @@ NOTE:
 
 
 old_file = f'/home/imalsky/Documents/Hot-Jupiter-Work/UPS-PLANETS/OG-GCM-OUTPUT/UPS-BIG-G-CLEAR.txt'
-new_file = f'/home/imalsky/Desktop/UPS-LOW-G-COM-CLEAR-1000-test.txt'
+new_file = f'/home/imalsky/Desktop/UPS-BIG-G-CLEAR-250.txt'
 
 
 smoothing = False
@@ -63,7 +63,7 @@ NPARAMS = 12
 
 NLON_new = 96	# for output file
 
-NTAU_new = 1000  # for output file
+NTAU_new = 250  # for output file
 
 
 

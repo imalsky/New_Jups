@@ -137,7 +137,6 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
   // The number of layers
   // Sometimes the inputs are bad and the top
   NEW_NLAYER = NLAYER - kmin;
-  //NEW_NLAYER = kmax - kmin;
 
   // Calculate the flux at the top of the atmosphere from the star
   temp_val_1 = (2.0 * h_constant * (NU * NU * NU)) / (CLIGHT * CLIGHT);

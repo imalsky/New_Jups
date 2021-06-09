@@ -748,7 +748,7 @@ int RT_Emit_3D(double PHASE)
             }
         }
         
-        /*
+        
         
         //Calculate the intensity of emergent rays at each latitude and longitude
         
@@ -802,9 +802,9 @@ int RT_Emit_3D(double PHASE)
         }
         //fclose(fptr);
         
-        */
         
         
+        /*
         // ~~~ THIS IS THE OLD RT ROUTINE ~~~ //
         for(l=0; l<NLAT; l++)
         {
@@ -832,7 +832,7 @@ int RT_Emit_3D(double PHASE)
                 }
             }
         }
-        
+        */
         
 
  

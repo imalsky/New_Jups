@@ -18,7 +18,7 @@ system_obliquity = 0
 
 # I recommend leaving these as is
 # The NLAT and NLON can be changed, but these values work well
-NTAU = 1000
+NTAU = 250
 NLAT = 48
 NLON = 96
 CLOUDS = 0
@@ -34,17 +34,10 @@ dopplers = [0]
 # So These should be in New_Jups/Planets
 # They should be pretty big files, and don't include the .txt with the names here
 
-#planet_name =  'TEST-1000'
-planet_name =  'TEST2-1000'
 #planet_name = 'UPS-LOW-G-CLOUDY-250'
-#planet_name = 'UPS-LOW-G-CLOUDY-1000'
-
-
-#planet_name = 'UPS-BIG-G-CLEAR-250'
-#planet_name = 'UPS-BIG-G-COM-CLOUDY-250'
 #planet_name = 'UPS-LOW-G-CLEAR-250'
-#planet_name = 'UPS-LOW-G-COM-CLOUDY-250'
-#planet_name = 'UPS-LOW-G-EXT-CLOUDY-250'
+planet_name = 'UPS-BIG-G-CLEAR-250'
+
 
 grid_lat_min = -87.16
 grid_lat_max = 87.16
@@ -173,8 +166,8 @@ phase_strs = []
 
 
 # If you already have the Final planet file creates you can commend out run_grid and add_columns
-#run_grid.run_all_grid(planet_name, phases, inclinations, system_obliquity, NTAU, NLAT, NLON, grid_lat_min, grid_lat_max, grid_lon_min, grid_lon_max)
-#add_columns(phases, inclinations)
+run_grid.run_all_grid(planet_name, phases, inclinations, system_obliquity, NTAU, NLAT, NLON, grid_lat_min, grid_lat_max, grid_lon_min, grid_lon_max)
+add_columns(phases, inclinations)
 
 input_paths, inclination_strs, phase_strs = get_run_lists(phases, inclinations)
 
