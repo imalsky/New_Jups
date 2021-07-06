@@ -168,7 +168,7 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
 
   // Calculate the intensity at the top of the atmosphere
   temp_val_1 = (2.0 * h_constant * (NU * NU * NU)) / (CLIGHT * CLIGHT);
-  temp_val_2 = exp(h_constant * NU / (bolz_constant * TEMPS[NEW_NLAYER-1])) - 1.0;
+  temp_val_2 = exp(h_constant * NU / (bolz_constant * TEMPS[0])) - 1.0;
   BB_TOP_OF_ATM = temp_val_1 * (1.0 / temp_val_2);
 
   // Calculate the intensity at the bottom of the atmosphere
@@ -365,7 +365,7 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
                       SOURCE_J[0]/(LAMBDAS[0] + 1.0) * (1.0 - exp(-TAULS[0] * (LAMBDAS[0]+1.0) )) + \
                       SOURCE_K[0]/(LAMBDAS[0] - 1.0) * (exp(-TAULS[0]) - exp(-TAULS[0]*LAMBDAS[0])) + \
                       SIGMA_1[0] * (1.0 - exp(-TAULS[0])) + \
-                      SIGMA_2[0] * (exp(-TAULS[0]) + TAULS[0] + 1.0);
+                      SIGMA_2[0] * (exp(-TAULS[0]) + TAULS[0] - 1.0);
 
 
   // Do the downward intensity first
@@ -414,8 +414,8 @@ double two_stream(int NLAYER, int kmin, double *w0_array, double *g0_array, \
 
   // Boundary conditions
   mu_1 = 0.577350;
-  EMIS = 0.0;
-  RSFX = 0.0;
+  EMIS = 1.0;
+  RSFX = 1.0;
   SFCS_QUADRATURE = RSFX * mu_0 * exp(-(TAUCS[NEW_NLAYER-1]) / mu_0) * PI * FLUX_SURFACE_QUADRATURE;
 
   // HERE WE FIND LAYER PROPERTIES FOLLOWING GENERAL SCHEME
